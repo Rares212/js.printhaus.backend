@@ -12,6 +12,7 @@ export class TypegooseConfigService implements TypegooseOptionsFactory {
     }
 
     createTypegooseOptions(): Promise<TypegooseModuleOptions> | TypegooseModuleOptions {
+        console.log(`URI: ${this.configService.get(CONFIG_KEYS.DB.MONGODB_URI)}`);
         return {
             uri: this.configService.get(CONFIG_KEYS.DB.MONGODB_URI)
         };

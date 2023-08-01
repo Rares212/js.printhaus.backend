@@ -1,5 +1,4 @@
 import {AdminModule, AdminModuleFactory} from "@adminjs/nestjs";
-import {Module} from "@nestjs/common";
 import {PrintingModule} from "./app/printing/printing.module";
 import {ShopModule} from "./app/shop/shop.module";
 import {ConfigModule, ConfigService} from "@nestjs/config";
@@ -13,8 +12,12 @@ import {SchemaModule} from "./app/common/schema/schema.module";
 import {PrintMaterial} from "./app/printing/models/print-material";
 import {getModelForClass} from "@typegoose/typegoose";
 import {buildFeature} from "adminjs";
+import {CacheModule} from "@nestjs/cache-manager";
+import {Module} from "@nestjs/common";
 
 const envFilePath: string = getEnvPath(`${__dirname}/config`)
+
+console.log(envFilePath);
 
 @Module({
     imports: [
@@ -25,6 +28,9 @@ const envFilePath: string = getEnvPath(`${__dirname}/config`)
             useClass: TypegooseConfigService
         }),
         SchemaModule,
+        CacheModule.register({
+            isGlobal: true
+        }),
         AdminModule.createAdminAsync({
             imports: [SchemaModule],
             inject: [getModelToken(PrintMaterial.name)],

@@ -8,5 +8,19 @@ export const CONFIG_KEYS = {
         ADMIN_COOKIE_NAME: 'ADMIN_COOKIE_NAME',
         ADMIN_COOKIE_PASSWORD: 'ADMIN_COOKIE_PASSWORD',
         ADMIN_SECRET: 'ADMIN_SECRET'
+    },
+    MESH: {
+        MAX_MESH_SIZE_MB: 'MAX_MESH_SIZE_MB',
+    },
+    COSTS: {
+        COST_PER_GRAM: 'COST_PER_GRAM',
+        COST_PER_HOUR: 'COST_PER_HOUR',
+        FIXED_COST: 'FIXED_COST',
+        // In cubic millimeters per second
+        AVERAGE_PRINT_SPEED: 'AVERAGE_PRINT_SPEED',
+    },
+    CURRENCY: {
+        MONEY_FORMAT: 'MONEY_FORMAT',
+        EXCHANGE_RATE_API_KEY: 'EXCHANGE_RATE_API_KEY',
     }
 }
