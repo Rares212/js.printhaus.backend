@@ -37,7 +37,6 @@ export class PrintProcessingService {
 
     public async getMaterialList(): Promise<PrintMaterialDto[]> {
         const materials: PrintMaterial[] = await this.printMaterialRepo.genericRepo.findAll();
-        console.log(materials);
 
         return this.mapper.mapArray(materials, PrintMaterial, PrintMaterialDto);
     }
@@ -52,9 +51,6 @@ export class PrintProcessingService {
         const decompressedFileBuffer: Uint8Array = gunzipSync(new Uint8Array(file.buffer));
 
         const geometry: BufferGeometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
-
-        console.log(geometry);
-        console.log(material);
 
         const cubicCentimeters: number = this.getVolumeInCubicCentimeters(geometry);
 
