@@ -26,11 +26,17 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+This repository contains the REST API for the Printnuts 3D printing website. It is built using the NestJS framework, a progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+
+The js.printnuts.rest repository is responsible for handling all the server-side operations of the Printnuts 3D printing website. It provides a set of RESTful APIs that the frontend application interacts with. The API handles tasks such as user authentication, data retrieval and storage, and server-side processing.
+
 ## Installation
 
-```bash
-$ yarn install
-```
+To set up this application in your local environment, follow these steps:
+
+    Clone the repository: git clone https://github.com/Rares212/js.printnuts.rest.git
+    Navigate to the repository: cd js.printnuts.rest
+    Install the dependencies: yarn install
 
 ## Running the app
 
