@@ -6,9 +6,8 @@ import {Expose} from "class-transformer";
 import { ObjectId, Schema } from "mongoose";
 
 export class PrintMaterial {
-    @prop({ required: true })
     @AutoMap()
-    _id: Schema.Types.ObjectId;
+    _id: ObjectId;
 
     @prop({required: true})
     @AutoMap()

@@ -49,6 +49,11 @@ console.log(envFilePath);
             isGlobal: true,
             envFilePath: envFilePath,
         }),
+        CacheModule.register({
+            isGlobal: true,
+            max: 100, // maximum number of items in cache
+            ttl: 60, // seconds
+        }),
     ],
     providers: [
         AdminConfigService

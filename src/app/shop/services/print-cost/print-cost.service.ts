@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {ConfigService} from "@nestjs/config";
 import {CONFIG_KEYS} from "../../../common/util/config-keys.enum";
+import { DineroObject } from "dinero.js";
+import { PrintMaterial } from "@src/app/printing/models/print-material";
 const Dinero = require('dinero.js')
 
 @Injectable()
@@ -9,10 +11,11 @@ export class PrintCostService {
     constructor(private configService: ConfigService) {
     }
 
-    public getPrintCost(grams: number, printTimeHours: number): PrintCost {
+    public getPrintCost(grams: number, printTimeHours: number, material: PrintMaterial): PrintCost {
         const cost = Dinero({amount: 0, currency: 'RON'});
+        const costPerKg = Dinero({amount: material.costAmount, currency: material.costCurrency});
 
-        const weightCost: PrintCost = this.calculateWeightCost(grams);
+        const weightCost: PrintCost = this.calculateWeightCost(grams, costPerKg);
         const timeCost: PrintCost = this.calculateTimeCost(printTimeHours);
         const fixedCost: PrintCost = this.calculateFixedCost();
 
@@ -22,10 +25,9 @@ export class PrintCostService {
         };
     }
 
-    private calculateWeightCost(grams: number): PrintCost {
-        const costPerGram: Dinero.Dinero = Dinero(JSON.parse(this.configService.get(CONFIG_KEYS.COSTS.COST_PER_GRAM)));
-        const cost = costPerGram.multiply(grams);
-        const costCalculationMessage = `${costPerGram.toFormat(this.moneyFormat)}/g * ${grams.toFixed(1)}g`;
+    private calculateWeightCost(grams: number, costPerKg: Dinero.Dinero): PrintCost {
+        const cost = costPerKg.multiply(grams / 1000);
+        const costCalculationMessage = `${costPerKg.toFormat(this.moneyFormat)}/kg * ${grams.toFixed(1)}g`;
         return {
             cost: cost,
             costCalculationMessage: costCalculationMessage

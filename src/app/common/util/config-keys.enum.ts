@@ -11,9 +11,9 @@ export const CONFIG_KEYS = {
     },
     MESH: {
         MAX_MESH_SIZE_MB: 'MAX_MESH_SIZE_MB',
+        CACHE_MESHES: 'CACHE_MESHES',
     },
     COSTS: {
-        COST_PER_GRAM: 'COST_PER_GRAM',
         COST_PER_HOUR: 'COST_PER_HOUR',
         FIXED_COST: 'FIXED_COST',
         // In cubic millimeters per second

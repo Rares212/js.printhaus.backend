@@ -2,10 +2,11 @@ import {
     BadRequestException,
     HttpException,
     HttpStatus,
+    Inject,
     Injectable,
-    InternalServerErrorException,
+    InternalServerErrorException, Logger,
     NotFoundException
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {INTERNAL_INFILL_WEIGHT_PERCENTAGE,
     PrintDimensionsDto, PrintMaterialDto, PrintModelDetailsRespDto, PRINT_QUALITY_SPEED_MULTIPLIER, PRINT_STRENGTH_INFILL, SupportedFileTypes } from '@printnuts/common';
 import {PrintMaterialRepo} from "../../repos/print-material/print-material.repo";
@@ -22,17 +23,25 @@ import {STLLoader} from "@src/app/printing/services/print-processing/stl-loader"
 import {OBJLoader} from "@src/app/printing/services/print-processing/obj-loader";
 import {mergeGeometries} from "@src/app/printing/services/print-processing/print-processing.utils";
 import {PrintModelDetailsReqDto} from "@src/app/printing/models/print-model-details.req.dto";
+import { CACHE_MANAGER, CacheKey } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { createHash } from 'crypto';
+import { Readable } from 'stream';
 
 @Injectable()
 export class PrintProcessingService {
 
+    private readonly logger = new Logger(PrintProcessingService.name);
+    private readonly cacheResults: boolean = this.configService.get(CONFIG_KEYS.MESH.CACHE_MESHES);
     private readonly stlLoader = new STLLoader();
     private readonly objLoader = new OBJLoader();
 
     constructor(private printMaterialRepo: PrintMaterialRepo,
                 private printCostService: PrintCostService,
                 @InjectMapper() private mapper: Mapper,
+                @Inject(CACHE_MANAGER) private cacheManager: Cache,
                 private configService: ConfigService) {
+        this.logger.log('Caching meshes: ' + this.cacheResults);
     }
 
     public async getMaterialList(): Promise<PrintMaterialDto[]> {
@@ -48,29 +57,54 @@ export class PrintProcessingService {
                 throw new NotFoundException(`Error retrieving material!`);
             });
 
-        const decompressedFileBuffer: Uint8Array = gunzipSync(new Uint8Array(file.buffer));
+        // Caching is necessary as a stateless means of not processing the file every time the user requests the same model details,
+        // with different parameters. This is a very common use case, as the user will likely want to see the model details for
+        // different materials, print settings, etc.
+        let decompressedFileBuffer: Uint8Array;
+        let geometry: BufferGeometry;
 
-        const geometry: BufferGeometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
+        if (this.cacheResults) {
+            const fileHash: string = await this.computeHash(file);
 
-        const cubicCentimeters: number = this.getVolumeInCubicCentimeters(geometry);
+            decompressedFileBuffer = await this.cacheManager.get(`decompressedFileBuffer-${fileHash}`);
+            if (!decompressedFileBuffer) {
+                decompressedFileBuffer = gunzipSync(new Uint8Array(file.buffer));
+                this.cacheManager.set(`decompressedFileBuffer-${fileHash}`, decompressedFileBuffer, 1000 * 60)
+                    .catch(() => this.logger.error('Error caching decompressed file buffer!'));
+            }
+
+            geometry = await this.cacheManager.get(`geometry-${fileHash}`);
+            if (!geometry) {
+                geometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
+                this.cacheManager.set(`geometry-${fileHash}`, geometry, 1000 * 60)
+                    .catch(() => this.logger.error('Error caching geometry!'));
+            }
+        } else {
+            decompressedFileBuffer = gunzipSync(new Uint8Array(file.buffer));
+            geometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
+        }
+
+        const totalCubicCm: number = this.getVolumeInCubicCentimeters(geometry);
 
         const infillPercent: number = PRINT_STRENGTH_INFILL[modelDetailsRequest.printSettings.strength];
-        const totalGrams: number = cubicCentimeters * material.gramsPerCubicCentimeter;
-        const grams: number = totalGrams * (1.0 - INTERNAL_INFILL_WEIGHT_PERCENTAGE) +
+        const totalGrams: number = totalCubicCm * material.gramsPerCubicCentimeter;
+        const realGrams: number = totalGrams * (1.0 - INTERNAL_INFILL_WEIGHT_PERCENTAGE) +
                               totalGrams * infillPercent * INTERNAL_INFILL_WEIGHT_PERCENTAGE;
+
+        const realCubicCm = realGrams / totalGrams * totalCubicCm;
 
         const dimensions: PrintDimensionsDto = this.getDimensions(geometry);
 
         const totalSpeedMultiplier: number = material.printSpeedMultiplier * PRINT_QUALITY_SPEED_MULTIPLIER[modelDetailsRequest.printSettings.quality];
 
-        const printTimeHours: number = this.getPrintTimeHours(cubicCentimeters, totalSpeedMultiplier);
+        const printTimeHours: number = this.getPrintTimeHours(realCubicCm, totalSpeedMultiplier);
 
-        const printCost: PrintCost = this.printCostService.getPrintCost(grams, printTimeHours);
+        const printCost: PrintCost = this.printCostService.getPrintCost(realGrams, printTimeHours, material);
 
         const response: PrintModelDetailsRespDto = new PrintModelDetailsRespDto(
-            cubicCentimeters,
+            totalCubicCm,
             dimensions,
-            grams,
+            realGrams,
             printTimeHours,
             printCost.cost.toObject(),
             printCost.costCalculationMessage
@@ -121,7 +155,7 @@ export class PrintProcessingService {
     private getPrintTimeHours(cubicCentimeters: number, speedMultiplier: number): number {
         const averageCubicMillimetersPerSecond: number = this.configService.get(CONFIG_KEYS.COSTS.AVERAGE_PRINT_SPEED);
         const printTimeSeconds: number = speedMultiplier * (cubicCentimeters * 1000) / averageCubicMillimetersPerSecond;
-        return  printTimeSeconds / 3600;
+        return printTimeSeconds / 3600;
     }
 
     private getVolumeInCubicCentimeters(geometry: BufferGeometry): number {
@@ -159,5 +193,28 @@ export class PrintProcessingService {
 
     private signedVolumeOfTriangle(p1: Vector3, p2: Vector3, p3: Vector3) {
         return p1.dot(p2.cross(p3)) / 6.0;
+    }
+
+
+    private computeHash(file: Express.Multer.File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const hash = createHash('md5'); // Or 'sha1'
+            const stream = new Readable();
+
+            stream.push(file.buffer);
+            stream.push(null);  // Signals the end of file contents.
+
+            stream.on('data', (chunk) => {
+                hash.update(chunk);
+            });
+
+            stream.on('end', () => {
+                resolve(hash.digest('hex'));
+            });
+
+            stream.on('error', (err) => {
+                reject(err);
+            });
+        });
     }
 }
