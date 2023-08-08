@@ -7,8 +7,16 @@ import {
     InternalServerErrorException, Logger,
     NotFoundException
 } from "@nestjs/common";
-import {INTERNAL_INFILL_WEIGHT_PERCENTAGE,
-    PrintDimensionsDto, PrintMaterialDto, PrintModelDetailsRespDto, PRINT_QUALITY_SPEED_MULTIPLIER, PRINT_STRENGTH_INFILL, SupportedFileTypes } from '@printnuts/common';
+import {
+  INTERNAL_INFILL_WEIGHT_PERCENTAGE,
+  PrintCostPartDto,
+  PrintDimensionsDto,
+  PrintMaterialDto,
+  PrintModelDetailsRespDto,
+  PRINT_QUALITY_SPEED_MULTIPLIER,
+  PRINT_STRENGTH_INFILL,
+  SupportedFileTypes,
+} from '@printnuts/common';
 import {PrintMaterialRepo} from "../../repos/print-material/print-material.repo";
 import {PrintMaterial} from "../../models/print-material";
 import {InjectMapper} from "@automapper/nestjs";
@@ -101,13 +109,14 @@ export class PrintProcessingService {
 
         const printCost: PrintCost = this.printCostService.getPrintCost(realGrams, printTimeHours, material);
 
+
         const response: PrintModelDetailsRespDto = new PrintModelDetailsRespDto(
             totalCubicCm,
             dimensions,
             realGrams,
             printTimeHours,
-            printCost.cost.toObject(),
-            printCost.costCalculationMessage
+            printCost.totalCost.toObject(),
+            printCost.costParts
         );
 
         try {
