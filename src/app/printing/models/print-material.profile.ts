@@ -2,7 +2,6 @@ import {AutomapperProfile, InjectMapper} from "@automapper/nestjs";
 import { beforeMap, createMap, forMember, mapFrom, Mapper, MappingProfile, typeConverter } from "@automapper/core";
 import {PrintMaterial} from "@src/app/printing/models/print-material";
 import { PrintMaterialDto } from "@printnuts/common";
-import { Schema } from "mongoose";
 
 export class PrintMaterialProfile extends AutomapperProfile {
     constructor(@InjectMapper() mapper: Mapper) {
@@ -12,8 +11,8 @@ export class PrintMaterialProfile extends AutomapperProfile {
     override get profile(): MappingProfile {
         return (mapper) => {
             createMap(mapper, PrintMaterial, PrintMaterialDto, forMember(
-                (dest) => dest._id,
-              mapFrom((src) => src._id.toString())
+                (dest) => dest.id,
+              mapFrom((src) => src.id)
             ));
         }
     }

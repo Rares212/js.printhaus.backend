@@ -19,8 +19,7 @@ import {
 } from '@printnuts/common';
 import {PrintMaterialRepo} from "../../repos/print-material/print-material.repo";
 import {PrintMaterial} from "../../models/print-material";
-import {InjectMapper} from "@automapper/nestjs";
-import {Mapper} from "@automapper/core";
+
 import {ConfigService} from "@nestjs/config";
 import {CONFIG_KEYS} from "../../../common/util/config-keys.enum";
 import {PrintCost, PrintCostService} from "../../../shop/services/print-cost/print-cost.service";
@@ -35,7 +34,8 @@ import { CACHE_MANAGER, CacheKey } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import { createHash } from 'crypto';
 import { Readable } from 'stream';
-
+import { InjectMapper } from "@automapper/nestjs";
+import { Mapper } from "@automapper/core";
 @Injectable()
 export class PrintProcessingService {
 

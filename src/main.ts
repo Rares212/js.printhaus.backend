@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import {NestMiddleware, ValidationPipe} from "@nestjs/common";
 import AdminJS from "adminjs";
 import * as AdminJSMongoose from '@adminjs/mongoose'
-import {json, urlencoded} from "express";
 
 declare const module: any;
 

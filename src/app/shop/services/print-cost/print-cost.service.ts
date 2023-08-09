@@ -36,7 +36,6 @@ export class PrintCostService {
         const costPerHour: Dinero.Dinero = Dinero(JSON.parse(this.configService.get(CONFIG_KEYS.COSTS.COST_PER_HOUR)));
         const cost: Dinero.Dinero = costPerHour.multiply(printTimeHours);
 
-
         return new PrintCostPartDto('Time cost',
             `A variable cost that includes the time spent by the printer to print the model (${costPerHour.toFormat(this.moneyFormat)} per hour).`,
             cost.toObject());
