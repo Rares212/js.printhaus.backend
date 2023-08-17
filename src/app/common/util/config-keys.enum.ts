@@ -20,17 +20,9 @@ export const CONFIG_KEYS = {
         MAX_IMAGE_SIZE_MB: 'MAX_IMAGE_SIZE_MB',
     },
     MESH: {
-        MAX_MESH_SIZE_MB: 'MAX_MESH_SIZE_MB',
         CACHE_MESHES: 'CACHE_MESHES',
     },
-    COSTS: {
-        COST_PER_HOUR: 'COST_PER_HOUR',
-        FIXED_COST: 'FIXED_COST',
-        // In cubic millimeters per second
-        AVERAGE_PRINT_SPEED: 'AVERAGE_PRINT_SPEED',
-    },
     CURRENCY: {
-        MONEY_FORMAT: 'MONEY_FORMAT',
         EXCHANGE_RATE_API_KEY: 'EXCHANGE_RATE_API_KEY',
     }
 }

@@ -1,4 +1,4 @@
-import {PrintSettingsDto, SupportedFileTypes } from "@printnuts/common";
+import {PrintSettingsDto, SupportedMeshFileTypes } from "@printnuts/common";
 import {
   IsDefined, IsEnum,
   IsMongoId,
@@ -10,8 +10,8 @@ import { Transform, Type } from "class-transformer";
 export class PrintModelDetailsReqDto {
 
   @IsDefined()
-  @IsEnum(SupportedFileTypes)
-  fileType: SupportedFileTypes;
+  @IsEnum(SupportedMeshFileTypes)
+  fileType: SupportedMeshFileTypes;
 
   @IsNotEmpty()
   @IsMongoId()

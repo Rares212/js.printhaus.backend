@@ -3,15 +3,20 @@ import { prop } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 export class FileInfo extends TimeStamps {
-    @prop({required: false})
+    @AutoMap()
+    id: string;
+
+    @prop({required: false, unique: true, index: true})
     s3Key: string;
 
-    @prop({required: false})
+    @prop({required: false, unique: true})
     bucket: string;
 
+    @AutoMap()
     @prop({required: false})
     mime: string;
 
+    @AutoMap()
     @prop({required: false})
     comment: string;
 }

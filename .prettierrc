@@ -1,4 +1,24 @@
 {
-  "singleQuote": true,
-  "trailingComma": "all"
+  "charset": "utf-8",
+  "useTabs": false,
+  "tabWidth": 4,
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "trailingComma": "none",
+  "printWidth": 120,
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "singleQuote": true
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "proseWrap": "preserve",
+        "trailingComma": "none"
+      }
+    }
+  ]
 }

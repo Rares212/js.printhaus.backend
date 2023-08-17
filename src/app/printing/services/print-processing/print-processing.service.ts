@@ -8,14 +8,15 @@ import {
     NotFoundException
 } from "@nestjs/common";
 import {
-  INTERNAL_INFILL_WEIGHT_PERCENTAGE,
-  PrintCostPartDto,
-  PrintDimensionsDto,
-  PrintMaterialDto,
-  PrintModelDetailsRespDto,
-  PRINT_QUALITY_SPEED_MULTIPLIER,
-  PRINT_STRENGTH_INFILL,
-  SupportedFileTypes,
+    DICTIONARY_KEYS,
+    INTERNAL_INFILL_WEIGHT_PERCENTAGE,
+    PrintCostPartDto,
+    PrintDimensionsDto,
+    PrintMaterialDto,
+    PrintModelDetailsRespDto,
+    PRINT_QUALITY_SPEED_MULTIPLIER,
+    PRINT_STRENGTH_INFILL,
+    SupportedMeshFileTypes
 } from '@printnuts/common';
 import {PrintMaterialRepo} from "../../repos/print-material/print-material.repo";
 import {PrintMaterial} from "../../models/print-material";
@@ -36,6 +37,7 @@ import { createHash } from 'crypto';
 import { Readable } from 'stream';
 import { InjectMapper } from "@automapper/nestjs";
 import { Mapper } from "@automapper/core";
+import { DictionaryService } from "@src/app/common/services/dictionary/dictionary.service";
 @Injectable()
 export class PrintProcessingService {
 
@@ -48,14 +50,9 @@ export class PrintProcessingService {
                 private printCostService: PrintCostService,
                 @InjectMapper() private mapper: Mapper,
                 @Inject(CACHE_MANAGER) private cacheManager: Cache,
-                private configService: ConfigService) {
+                private configService: ConfigService,
+                private dictionaryService: DictionaryService) {
         this.logger.log('Caching meshes: ' + this.cacheResults);
-    }
-
-    public async getMaterialList(): Promise<PrintMaterialDto[]> {
-        const materials: PrintMaterial[] = await this.printMaterialRepo.genericRepo.findAll();
-
-        return this.mapper.mapArray(materials, PrintMaterial, PrintMaterialDto);
     }
 
     public async getModelDetails(file: Express.Multer.File, modelDetailsRequest: PrintModelDetailsReqDto): Promise<PrintModelDetailsRespDto> {
@@ -105,10 +102,9 @@ export class PrintProcessingService {
 
         const totalSpeedMultiplier: number = material.printSpeedMultiplier * PRINT_QUALITY_SPEED_MULTIPLIER[modelDetailsRequest.printSettings.quality];
 
-        const printTimeHours: number = this.getPrintTimeHours(realCubicCm, totalSpeedMultiplier);
+        const printTimeHours: number = await this.getPrintTimeHours(realCubicCm, totalSpeedMultiplier);
 
-        const printCost: PrintCost = this.printCostService.getPrintCost(realGrams, printTimeHours, material);
-
+        const printCost: PrintCost = await this.printCostService.getPrintCost(realGrams, printTimeHours, material);
 
         const response: PrintModelDetailsRespDto = new PrintModelDetailsRespDto(
             totalCubicCm,
@@ -128,12 +124,12 @@ export class PrintProcessingService {
         return response;
     }
 
-    public getGeometryFromFile(fileBuffer: Uint8Array, fileType: SupportedFileTypes): BufferGeometry {
+    public getGeometryFromFile(fileBuffer: Uint8Array, fileType: SupportedMeshFileTypes): BufferGeometry {
         switch (fileType) {
-            case SupportedFileTypes.STL: {
+            case SupportedMeshFileTypes.STL: {
                 return this.stlLoader.parse(fileBuffer.buffer);
             }
-            case SupportedFileTypes.OBJ: {
+            case SupportedMeshFileTypes.OBJ: {
                 const group: Group = this.objLoader.parse(fileBuffer.toString());
                 return this.combineMeshes(group);
             }
@@ -161,8 +157,9 @@ export class PrintProcessingService {
         return new PrintDimensionsDto(vectorSize.x, vectorSize.y, vectorSize.z);
     }
 
-    private getPrintTimeHours(cubicCentimeters: number, speedMultiplier: number): number {
-        const averageCubicMillimetersPerSecond: number = this.configService.get(CONFIG_KEYS.COSTS.AVERAGE_PRINT_SPEED);
+    private async getPrintTimeHours(cubicCentimeters: number, speedMultiplier: number): Promise<number> {
+        const dictionaryValue = await this.dictionaryService.findByKey(DICTIONARY_KEYS.PRINT.AVERAGE_PRINT_SPEED);
+        const averageCubicMillimetersPerSecond: number = Number(dictionaryValue.value);
         const printTimeSeconds: number = speedMultiplier * (cubicCentimeters * 1000) / averageCubicMillimetersPerSecond;
         return printTimeSeconds / 3600;
     }

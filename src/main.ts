@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import {NestMiddleware, ValidationPipe} from "@nestjs/common";
 import AdminJS from "adminjs";
 import * as AdminJSMongoose from '@adminjs/mongoose'
+import * as mongoose from "mongoose";
 
 declare const module: any;
 
@@ -25,6 +26,8 @@ async function bootstrap() {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
+
+  mongoose.set('debug', true);
 }
 
 bootstrap();

@@ -7,7 +7,6 @@ export class PrintMaterialType extends TimeStamps {
     @AutoMap()
     id: string;
 
-    @AutoMap()
     @prop({ required: true, ref: () => FileInfo })
     photos: Ref<FileInfo>[];
 

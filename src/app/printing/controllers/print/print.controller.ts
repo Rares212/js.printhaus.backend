@@ -10,14 +10,16 @@ import { PrintProcessingService } from '../../services/print-processing/print-pr
 import { PrintModelDetailsReqDto } from '@src/app/printing/models/print-model-details.req.dto';
 import { PrintMaterialDto, PrintModelDetailsRespDto } from '@printnuts/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PrintMaterialService } from "@src/app/printing/services/print-material/print-material.service";
 
 @Controller('print')
 export class PrintController {
-  constructor(private printService: PrintProcessingService) {}
+  constructor(private printService: PrintProcessingService,
+              private printMaterialService: PrintMaterialService) {}
 
   @Get('/materials')
   public getMaterials(): Promise<PrintMaterialDto[]> {
-    return this.printService.getMaterialList();
+    return this.printMaterialService.getMaterialList();
   }
 
   @Post('/model-details')
