@@ -4,11 +4,11 @@ import { PrintMaterial } from "@src/app/printing/models/print-material";
 import { PrintMaterialType } from "@src/app/printing/models/print-material-type";
 import { PrintMaterialTypeDto } from '@printnuts/common';
 
-export class PrintMaterialTypeProfile extends  AutomapperProfile {
+export class PrintMaterialTypeProfile extends AutomapperProfile {
     constructor(@InjectMapper() mapper: Mapper) {
         super(mapper);
     }
-    
+
     get profile(): MappingProfile {
         return (mapper) => {
             createMap(mapper, PrintMaterialType, PrintMaterialTypeDto, forMember(
@@ -17,5 +17,4 @@ export class PrintMaterialTypeProfile extends  AutomapperProfile {
             ));
         }
     }
-    
 }

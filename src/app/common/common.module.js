@@ -1,5 +1,8 @@
 "use strict";
 import { AwsS3Service } from './services/aws-s3/aws-s3.service';
+import { DictionaryService } from './services/dictionary/dictionary.service';
+import { DictionaryValueRepoService } from './repos/dictionary-value.repo/dictionary-value.repo.service';
+import { DictionaryService } from './services/dictionary/dictionary.service';
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);

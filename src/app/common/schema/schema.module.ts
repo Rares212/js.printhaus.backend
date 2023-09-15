@@ -4,6 +4,8 @@ import { PrintMaterial } from '../../printing/models/print-material';
 import { PrintMaterialType } from '@src/app/printing/models/print-material-type';
 import { FileInfo } from '@src/app/common/models/file-info';
 import { DictionaryValue } from "@src/app/common/models/dictionary-value";
+import { HausUser } from "@src/app/auth/models/haus-user";
+import { ShopItem } from "@src/app/shop/models/shop.item";
 
 @Module({
     imports: [
@@ -11,7 +13,9 @@ import { DictionaryValue } from "@src/app/common/models/dictionary-value";
             PrintMaterial,
             PrintMaterialType,
             FileInfo,
-            DictionaryValue
+            DictionaryValue,
+            HausUser,
+            ShopItem
         ])
     ],
     exports: [TypegooseModule]

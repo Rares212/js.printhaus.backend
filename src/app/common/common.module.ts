@@ -9,7 +9,7 @@ import { DictionaryValueProfile } from '@src/app/common/models/dictionary-value.
 import { FileInfoProfile } from '@src/app/common/models/file-info.profile';
 import { AwsS3Service } from "@src/app/common/services/aws-s3/aws-s3.service";
 import { DictionaryService } from "@src/app/common/services/dictionary/dictionary.service";
-import { DictionaryValueRepo } from "@src/app/common/repos/dictionary-value.repo/dictionary-value.repo";
+import { DictionaryValueRepo } from "@src/app/common/repos/dictionary-value/dictionary-value.repo";
 
 @Module({
   imports: [

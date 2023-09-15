@@ -24,5 +24,10 @@ export const CONFIG_KEYS = {
     },
     CURRENCY: {
         EXCHANGE_RATE_API_KEY: 'EXCHANGE_RATE_API_KEY',
+    },
+    AUTH: {
+        ISSUER: 'AUTH_ISSUER',
+        AUDIENCE: 'AUTH_AUDIENCE',
+        ALGORITHM: 'AUTH_ALGORITHM',
     }
 }

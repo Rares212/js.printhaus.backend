@@ -10,8 +10,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { AdminConfigModule } from './app/admin/admin-config.module';
 import { CachingConfigModule } from "@src/app/caching/caching-config-module";
-
-const uploadFeature = require('@adminjs/upload');
+import { HausAuthModule } from "@src/app/auth/haus-auth.module";
 
 const envFilePath: string = getEnvPath(`${__dirname}/config`);
 
@@ -35,7 +34,8 @@ console.log(envFilePath);
             isGlobal: true
         }),
         AdminConfigModule,
-        CachingConfigModule
+        CachingConfigModule,
+        HausAuthModule
     ],
     providers: []
 })

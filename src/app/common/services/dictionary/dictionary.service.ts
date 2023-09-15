@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { DictionaryValueDto } from '@printnuts/common';
-import { DictionaryValueRepo } from '@src/app/common/repos/dictionary-value.repo/dictionary-value.repo';
+import { DictionaryValueRepo } from '@src/app/common/repos/dictionary-value/dictionary-value.repo';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { DictionaryValue } from '@src/app/common/models/dictionary-value';
