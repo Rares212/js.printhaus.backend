@@ -11,6 +11,7 @@ import { Module } from '@nestjs/common';
 import { AdminConfigModule } from './app/admin/admin-config.module';
 import { CachingConfigModule } from "@src/app/caching/caching-config-module";
 import { HausAuthModule } from "@src/app/auth/haus-auth.module";
+import { HausFileModule } from './app/haus-file/haus-file.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/config`);
 
@@ -35,7 +36,8 @@ console.log(envFilePath);
         }),
         AdminConfigModule,
         CachingConfigModule,
-        HausAuthModule
+        HausAuthModule,
+        HausFileModule
     ],
     providers: []
 })

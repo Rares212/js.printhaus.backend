@@ -6,7 +6,7 @@ import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
 import { PrintMaterialProfile } from '@src/app/printing/models/print-material.profile';
 import { DictionaryValueProfile } from '@src/app/common/models/dictionary-value.profile';
-import { FileInfoProfile } from '@src/app/common/models/file-info.profile';
+import { FileInfoProfile } from '@src/app/haus-file/models/file-info.profile';
 import { AwsS3Service } from "@src/app/common/services/aws-s3/aws-s3.service";
 import { DictionaryService } from "@src/app/common/services/dictionary/dictionary.service";
 import { DictionaryValueRepo } from "@src/app/common/repos/dictionary-value/dictionary-value.repo";
@@ -20,6 +20,8 @@ import { DictionaryValueRepo } from "@src/app/common/repos/dictionary-value/dict
     }),
   ],
   exports: [
+    AwsS3Service,
+
     DictionaryService,
     DictionaryValueRepo,
   ],
@@ -31,8 +33,6 @@ import { DictionaryValueRepo } from "@src/app/common/repos/dictionary-value/dict
     DictionaryValueProfile,
 
     TypegooseConfigService,
-
-    FileInfoProfile,
   ],
 })
 export class CommonModule {}

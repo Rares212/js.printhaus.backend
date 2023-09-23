@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { getModelToken } from 'nestjs-typegoose';
 import { PrintMaterial } from '@src/app/printing/models/print-material';
 import { PrintMaterialType } from '@src/app/printing/models/print-material-type';
-import { FileInfo } from '@src/app/common/models/file-info';
+import { FileInfo } from '@src/app/haus-file/models/file-info';
 import { getModelForClass } from '@typegoose/typegoose';
 import uploadFeature from '@adminjs/upload';
 import { CONFIG_KEYS } from '@src/app/common/util/config-keys.enum';
@@ -31,19 +31,120 @@ import { HausUser } from '@src/app/auth/models/haus-user';
                         rootPath: '/admin',
                         resources: [
                             {
-                                resource: getModelForClass(PrintMaterial)
+                                resource: getModelForClass(PrintMaterial),
+                                properties: {
+                                    createdAt: {
+                                        isVisible: {
+                                            list: true,
+                                            filter: true,
+                                            show: true,
+                                            edit: false
+                                        }
+                                    },
+                                    updatedAt: {
+                                        isVisible: {
+                                            list: true,
+                                            filter: true,
+                                            show: true,
+                                            edit: false
+                                        }
+                                    }
+                                }
                             },
                             {
-                                resource: getModelForClass(PrintMaterialType)
+                                resource: getModelForClass(PrintMaterialType),
+                                options: {
+                                    properties: {
+                                        shortName: {
+                                            isTitle: true
+                                        },
+                                        createdAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        updatedAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             {
-                                resource: getModelForClass(DictionaryValue)
+                                resource: getModelForClass(DictionaryValue),
+                                options: {
+                                    properties: {
+                                        createdAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        updatedAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             {
-                                resource: getModelForClass(ShopItem)
+                                resource: getModelForClass(ShopItem),
+                                options: {
+                                    properties: {
+                                        createdAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        updatedAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             {
-                                resource: getModelForClass(HausUser)
+                                resource: getModelForClass(HausUser),
+                                options: {
+                                    properties: {
+                                        createdAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        updatedAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             {
                                 resource: getModelForClass(FileInfo),
@@ -52,6 +153,46 @@ import { HausUser } from '@src/app/auth/models/haus-user';
                                         comment: {
                                             type: 'textarea',
                                             isSortable: false
+                                        },
+                                        createdAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        updatedAt: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        s3Key: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        mime: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
+                                        },
+                                        bucket: {
+                                            isVisible: {
+                                                list: true,
+                                                filter: true,
+                                                show: true,
+                                                edit: false
+                                            }
                                         }
                                     }
                                 },

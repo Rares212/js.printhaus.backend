@@ -1,8 +1,10 @@
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 import { AutoMap } from "@automapper/classes";
 import { prop, Ref } from "@typegoose/typegoose";
-import { FileInfo } from "@src/app/common/models/file-info";
+import { FileInfo } from "@src/app/haus-file/models/file-info";
 import { UserRating } from "@src/app/shop/models/user-rating";
+import { PrintMaterial } from "@src/app/printing/models/print-material";
+import { HausImage } from "@src/app/common/models/haus-image";
 
 export class ShopItem extends TimeStamps {
     @AutoMap()
@@ -10,7 +12,7 @@ export class ShopItem extends TimeStamps {
 
     @AutoMap()
     @prop({ required: true })
-    name: string;
+    name: string; 
 
     @AutoMap()
     @prop({ required: true, maxlength: 300 })
@@ -20,13 +22,12 @@ export class ShopItem extends TimeStamps {
     @prop({ required: true })
     creator: string;
 
-    @AutoMap()
-    @prop({ required: true })
-    materialName: string;
+    @prop({ required: true, ref: () => PrintMaterial })
+    material: Ref<PrintMaterial>
 
     @AutoMap()
-    @prop({ required: true })
-    materialType: string;
+    @prop({ required: true, min: 0 })
+    grams: number;
 
     @AutoMap()
     @prop({ required: true })
@@ -43,26 +44,25 @@ export class ShopItem extends TimeStamps {
     @prop({ ref: () => UserRating, default: [] })
     ratings: Ref<UserRating>[];
 
-    @prop({ required: true, ref: () => FileInfo })
-    thumbnail: Ref<FileInfo>;
+    @prop({ required: true, ref: () => HausImage })
+    mainPhoto: Ref<HausImage>;
 
     @prop({ required: true, ref: () => FileInfo })
-    photos: Ref<FileInfo>[];
+    galleryPhotos: Ref<FileInfo>[];
+
+    @prop({ required: true, ref: () => FileInfo })
+    modelFile: Ref<FileInfo>
 
     @AutoMap()
     @prop({ required: true, default: false })
     assemblyRequired: boolean;
 
     @AutoMap()
-    @prop({ required: true })
-    color: string;
-
-    @AutoMap()
-    @prop({ required: true })
+    @prop({ required: true, min: 0 })
     costAmount: number;
 
     @AutoMap()
-    @prop({ required: true })
+    @prop({ required: true, min: 0 })
     reducedCostAmount: number;
 
     @AutoMap()

@@ -12,7 +12,7 @@ export class ShopItemRepo {
         return this._genericRepo;
     }
 
-    constructor(@InjectModel(ShopItem) private readonly printMaterialTypeModel: ReturnModelType<typeof ShopItem>) {
-        this._genericRepo = new MongoGenericRepository<ShopItem>(printMaterialTypeModel);
+    constructor(@InjectModel(ShopItem) private readonly shopItemTypeModel: ReturnModelType<typeof ShopItem>) {
+        this._genericRepo = new MongoGenericRepository<ShopItem>(shopItemTypeModel);
     }
 }

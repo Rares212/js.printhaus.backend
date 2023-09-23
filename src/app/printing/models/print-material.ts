@@ -1,6 +1,7 @@
 import { prop, Ref } from '@typegoose/typegoose';
 import { AutoMap } from '@automapper/classes';
 import { PrintMaterialType } from '@src/app/printing/models/print-material-type';
+import { PrintMaterialUseType } from '@printnuts/common';
 
 export class PrintMaterial {
     @AutoMap()
@@ -12,9 +13,6 @@ export class PrintMaterial {
 
     @prop({ required: true, ref: () => PrintMaterialType })
     materialType: Ref<PrintMaterialType>;
-
-    @AutoMap()
-    materialTypeShortName?: string;
 
     @prop({ required: true })
     @AutoMap()
@@ -35,4 +33,14 @@ export class PrintMaterial {
     @prop({ required: true })
     @AutoMap()
     costCurrency: string;
+
+    @prop({ required: true, enum: PrintMaterialUseType })
+    useType: PrintMaterialUseType;
+
+    @prop({ required: true, default: 0 })
+    @AutoMap()
+    gramsInStock: number;
+
+    @prop({ required: false })
+    buyLink?: string;
 }

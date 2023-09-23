@@ -6,6 +6,10 @@ export class FileInfo extends TimeStamps {
     @AutoMap()
     id: string;
 
+    @AutoMap()
+    @prop({required: true, unique: true, index: true})
+    title: string;
+
     @prop({required: false, unique: true, index: true})
     s3Key: string;
 

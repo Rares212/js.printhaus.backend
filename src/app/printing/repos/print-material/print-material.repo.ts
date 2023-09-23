@@ -3,6 +3,7 @@ import {InjectModel} from "nestjs-typegoose";
 import {PrintMaterial} from "../../models/print-material";
 import {ReturnModelType} from "@typegoose/typegoose";
 import {MongoGenericRepository} from "../../../common/schema/mongo-generic.repository";
+import { PrintMaterialUseType } from '@printnuts/common';
 
 @Injectable()
 export class PrintMaterialRepo {
@@ -10,6 +11,10 @@ export class PrintMaterialRepo {
 
     get genericRepo(): MongoGenericRepository<PrintMaterial> {
         return this._genericRepo;
+    }
+
+    findAllByUseTypes(useTypeList: PrintMaterialUseType[]) {
+        return this.printMaterialModel.find({ useType: { $in: useTypeList } }).exec();
     }
 
     constructor(@InjectModel(PrintMaterial) private readonly printMaterialModel: ReturnModelType<typeof PrintMaterial>) {

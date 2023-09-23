@@ -18,6 +18,7 @@ export const CONFIG_KEYS = {
     },
     IMAGE: {
         MAX_IMAGE_SIZE_MB: 'MAX_IMAGE_SIZE_MB',
+        THUMBNAIL_SIZE_PX: 'THUMBNAIL_SIZE_PX',
     },
     MESH: {
         CACHE_MESHES: 'CACHE_MESHES',

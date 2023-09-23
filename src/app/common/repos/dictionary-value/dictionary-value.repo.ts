@@ -14,15 +14,15 @@ export class DictionaryValueRepo {
 
     constructor(
         @InjectModel(DictionaryValue)
-        private readonly printMaterialModel: ReturnModelType<typeof DictionaryValue>
+        private readonly dictionaryValue: ReturnModelType<typeof DictionaryValue>
     ) {
         this._genericRepo = new MongoGenericRepository<DictionaryValue>(
-            printMaterialModel
+            dictionaryValue
         );
     }
 
     findByKey(key: string): Promise<DictionaryValue> {
-        return this.printMaterialModel
+        return this.dictionaryValue
             .findOne({ key: key })
             .exec() as Promise<DictionaryValue>;
     }

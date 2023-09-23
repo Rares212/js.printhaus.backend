@@ -1,6 +1,6 @@
 import { AutoMap } from "@automapper/classes";
 import { prop, Ref } from "@typegoose/typegoose";
-import { FileInfo } from "@src/app/common/models/file-info";
+import { FileInfo } from "@src/app/haus-file/models/file-info";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 export class PrintMaterialType extends TimeStamps {
@@ -11,11 +11,11 @@ export class PrintMaterialType extends TimeStamps {
     photos: Ref<FileInfo>[];
 
     @AutoMap()
-    @prop({ required: true })
+    @prop({ required: true, unique: true, index: true })
     shortName: string;
 
     @AutoMap()
-    @prop({ required: true })
+    @prop({ required: true, unique: true, index: true })
     fullName: string;
 
     @AutoMap()
