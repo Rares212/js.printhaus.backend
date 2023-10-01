@@ -11,13 +11,27 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "strictNullChecks": false,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "paths": {
-      "@src/*": ["src/*"],
-    },
+      "@src/*": [
+        "src/*"
+      ],
+      "@haus/db-common": [
+        "libs/db-common/src"
+      ],
+      "@haus/db-common/*": [
+        "libs/db-common/src/*"
+      ],
+      "@haus/api-common/": [
+        "libs/api-common/src"
+      ],
+      "@haus/api-common/*": [
+        "libs/api-common/src/*"
+      ]
+    }
   }
 }

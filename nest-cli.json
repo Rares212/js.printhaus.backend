@@ -1,11 +1,53 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/public-api/src",
   "compilerOptions": {
     "assets": [
       "config/*"
     ],
-    "deleteOutDir": true
-  }
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/public-api/tsconfig.app.json"
+  },
+  "projects": {
+    "public-api": {
+      "type": "application",
+      "root": "apps/public-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/public-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/public-api/tsconfig.app.json"
+      }
+    },
+    "admin-dashboard": {
+      "type": "application",
+      "root": "apps/admin-dashboard",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin-dashboard/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin-dashboard/tsconfig.app.json"
+      }
+    },
+    "db-common": {
+      "type": "library",
+      "root": "libs/db-common",
+      "entryFile": "index",
+      "sourceRoot": "libs/db-common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/db-common/tsconfig.lib.json"
+      }
+    },
+    "api-common": {
+      "type": "library",
+      "root": "libs/api-common",
+      "entryFile": "index",
+      "sourceRoot": "libs/api-common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/api-common/tsconfig.lib.json"
+      }
+    }
+  },
+  "monorepo": true,
+  "root": "apps/public-api"
 }
