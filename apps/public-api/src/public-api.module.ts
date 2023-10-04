@@ -31,7 +31,6 @@ console.log(`envFilePath: ${envFilePath}`);
         }),
 
         DbCommonModule,
-        PublicApiModule,
 
         FileInfoModule,
         DictionaryModule,

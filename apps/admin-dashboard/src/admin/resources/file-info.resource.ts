@@ -1,12 +1,12 @@
 import { ConfigService } from '@nestjs/config';
-import { getModelForClass } from '@typegoose/typegoose';
+import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
 import { FileInfo } from '@haus/db-common/file-info/model/file-info';
 import uploadFeature from '@adminjs/upload';
 import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
 
-export function getFileInfoResource(configService: ConfigService) {
+export function getFileInfoResource(resource: ReturnModelType<typeof FileInfo>,configService: ConfigService) {
     return {
-        resource: getModelForClass(FileInfo),
+        resource: resource,
         options: {
             properties: {
                 comment: {

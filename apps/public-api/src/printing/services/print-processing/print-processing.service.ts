@@ -161,7 +161,7 @@ export class PrintProcessingService {
 
     private getDimensions(geometry: BufferGeometry): PrintDimensionsDto {
         geometry.computeBoundingBox();
-        let vectorSize: Vector3 = new Vector3();
+        const vectorSize: Vector3 = new Vector3();
         geometry.boundingBox.getSize(vectorSize);
         return new PrintDimensionsDto(vectorSize.x, vectorSize.y, vectorSize.z);
     }
@@ -179,14 +179,14 @@ export class PrintProcessingService {
             throw new InternalServerErrorException('Error parsing geometry');
         }
 
-        let isIndexed = geometry.index !== null;
-        let position = geometry.getAttribute('position') as BufferAttribute;
+        const isIndexed = geometry.index !== null;
+        const position = geometry.getAttribute('position') as BufferAttribute;
         let sum = 0;
-        let p1 = new Vector3(),
+        const p1 = new Vector3(),
             p2 = new Vector3(),
             p3 = new Vector3();
         if (!isIndexed) {
-            let faces = position.count / 3;
+            const faces = position.count / 3;
             for (let i = 0; i < faces; i++) {
                 p1.fromBufferAttribute(position, i * 3 + 0);
                 p2.fromBufferAttribute(position, i * 3 + 1);
@@ -194,8 +194,8 @@ export class PrintProcessingService {
                 sum += this.signedVolumeOfTriangle(p1, p2, p3);
             }
         } else {
-            let index = geometry.index;
-            let faces = index.count / 3;
+            const index = geometry.index;
+            const faces = index.count / 3;
             for (let i = 0; i < faces; i++) {
                 p1.fromBufferAttribute(position, index.array[i * 3 + 0]);
                 p2.fromBufferAttribute(position, index.array[i * 3 + 1]);

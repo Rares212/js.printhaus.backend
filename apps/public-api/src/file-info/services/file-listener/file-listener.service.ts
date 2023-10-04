@@ -68,7 +68,7 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
                 if (originalImage.Body instanceof Readable) {
                     const imageBuffer = await streamToBuffer(originalImage.Body);
 
-                    for (let key in IMAGE_CONSTANTS) {
+                    for (const key in IMAGE_CONSTANTS) {
                         await this.generateThumbnail(
                             imageBuffer,
                             fileInfo,
@@ -106,7 +106,7 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
         const thumbnailUploadResult = await this.s3Service.uploadFile(thumbnailBuffer, fileInfo.bucket);
 
         // Insert a new FileInfo document with the thumbnail details
-        let thumbnailFileInfo = new FileInfo();
+        const thumbnailFileInfo = new FileInfo();
         thumbnailFileInfo.title = `${fileInfo.title}${postfix}`;
         thumbnailFileInfo.s3Key = thumbnailUploadResult.fileKey;
         thumbnailFileInfo.bucket = thumbnailUploadResult.bucketName;
@@ -125,7 +125,7 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
     }
 
     private endsWithAnyPostfix(title: string): boolean {
-        for (let key in IMAGE_CONSTANTS) {
+        for (const key in IMAGE_CONSTANTS) {
             if (title.endsWith(IMAGE_CONSTANTS[key].POSTFIX)) {
                 return true;
             }

@@ -6,6 +6,6 @@ import { ModelInfo } from '@haus/db-common/model-info/model/model-info';
 @Module({
     imports: [TypegooseModule.forFeature([ModelInfo])],
     providers: [ModelInfoRepo],
-    exports: [ModelInfoRepo]
+    exports: [ModelInfoRepo, TypegooseModule]
 })
 export class ModelInfoDbModule {}

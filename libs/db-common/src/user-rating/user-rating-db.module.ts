@@ -6,6 +6,6 @@ import { UserRatingRepo } from '@haus/db-common/user-rating/repo/user-rating.rep
 @Module({
     imports: [TypegooseModule.forFeature([UserRating])],
     providers: [UserRatingRepo],
-    exports: [UserRatingRepo]
+    exports: [UserRatingRepo, TypegooseModule]
 })
 export class UserRatingDbModule {}

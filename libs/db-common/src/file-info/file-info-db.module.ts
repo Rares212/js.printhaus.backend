@@ -7,6 +7,6 @@ import { FileInfoRepo } from '@haus/db-common/file-info/repo/file-info.repo/file
 @Module({
     imports: [TypegooseModule.forFeature([FileInfo])],
     providers: [FileInfoProfile, FileInfoRepo],
-    exports: [FileInfoRepo]
+    exports: [FileInfoRepo, TypegooseModule]
 })
 export class FileInfoDbModule {}

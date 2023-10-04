@@ -1,7 +1,8 @@
 import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
-import { DictionaryValue } from '@haus/db-common/dictionary-value/model/dictionary-value';
+import { ImageInfo } from '@haus/db-common/image-info/model/image-info';
+import { ModelInfo } from "@haus/db-common/model-info/model/model-info";
 
-export function getDictionaryValueResource(resource: ReturnModelType<typeof DictionaryValue>) {
+export function getModelInfoResource(resource: ReturnModelType<typeof ModelInfo>) {
     return {
         resource: resource,
         options: {
