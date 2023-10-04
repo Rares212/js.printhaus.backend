@@ -1,41 +1,49 @@
 import { Module } from '@nestjs/common';
-import { DictionaryValueModule } from './dictionary-value/dictionary-value.module';
-import { PrintMaterialModule } from './print-material/print-material.module';
-import { PrintMaterialTypeModule } from './print-material-type/print-material-type.module';
-import { ShopItemModule } from './shop-item/shop-item.module';
-import { AuthUserModule } from './auth-user/auth-user.module';
-import { UserRatingModule } from './user-rating/user-rating.module';
-import { FileInfoModule } from './file-info/file-info.module';
-import { ImageInfoModule } from './image-info/image-info.module';
+import { DictionaryValueDbModule } from './dictionary-value/dictionary-value-db.module';
+import { PrintMaterialDbModule } from './print-material/print-material-db.module';
+import { PrintMaterialTypeDbModule } from './print-material-type/print-material-type-db.module';
+import { ShopItemDbModule } from './shop-item/shop-item-db.module';
+import { AuthUserDbModule } from './auth-user/auth-user-db.module';
+import { UserRatingDbModule } from './user-rating/user-rating-db.module';
+import { FileInfoDbModule } from './file-info/file-info-db.module';
+import { ImageInfoDbModule } from './image-info/image-info-db.module';
 import { CommonSchemaModule } from './common-schema/common-schema.module';
-import { ModelInfoModule } from './model-info/model-info.module';
+import { ModelInfoDbModule } from './model-info/model-info-db.module';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { TypegooseConfigService } from '@haus/db-common/common-schema/services/typegoose-config/typegoose-config.service';
 
 @Module({
     imports: [
-        DictionaryValueModule,
-        FileInfoModule,
-        ImageInfoModule,
-        PrintMaterialModule,
-        PrintMaterialTypeModule,
-        ShopItemModule,
-        AuthUserModule,
-        UserRatingModule,
-        FileInfoModule,
+        DictionaryValueDbModule,
+        FileInfoDbModule,
+        ImageInfoDbModule,
+        PrintMaterialDbModule,
+        PrintMaterialTypeDbModule,
+        ShopItemDbModule,
+        AuthUserDbModule,
+        UserRatingDbModule,
+        FileInfoDbModule,
         CommonSchemaModule,
-        ModelInfoModule
+        ModelInfoDbModule,
+
+        TypegooseModule.forRootAsync({
+            useClass: TypegooseConfigService
+        })
     ],
     exports: [
-        DictionaryValueModule,
-        FileInfoModule,
-        ImageInfoModule,
-        PrintMaterialModule,
-        PrintMaterialTypeModule,
-        ShopItemModule,
-        AuthUserModule,
-        UserRatingModule,
-        FileInfoModule,
+        DictionaryValueDbModule,
+        FileInfoDbModule,
+        ImageInfoDbModule,
+        PrintMaterialDbModule,
+        PrintMaterialTypeDbModule,
+        ShopItemDbModule,
+        AuthUserDbModule,
+        UserRatingDbModule,
+        FileInfoDbModule,
         CommonSchemaModule,
-        ModelInfoModule
+        ModelInfoDbModule,
+
+        TypegooseModule
     ]
 })
 export class DbCommonModule {}

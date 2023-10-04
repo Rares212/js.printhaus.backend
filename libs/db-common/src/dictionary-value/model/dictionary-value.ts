@@ -1,13 +1,13 @@
-import { prop } from "@typegoose/typegoose";
-import { AutoMap } from "@automapper/classes";
-import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
+import { prop } from '@typegoose/typegoose';
+import { AutoMap } from '@automapper/classes';
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 export class DictionaryValue extends TimeStamps {
     @AutoMap()
-    @prop({required: true, unique: true, index: true})
+    @prop({ required: true, unique: true, index: true })
     key: string;
 
     @AutoMap()
-    @prop({required: true})
+    @prop({ required: true })
     value: string;
 }

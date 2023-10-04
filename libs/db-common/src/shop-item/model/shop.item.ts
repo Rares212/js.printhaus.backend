@@ -1,10 +1,10 @@
-import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
-import { AutoMap } from "@automapper/classes";
-import { prop, Ref } from "@typegoose/typegoose";
-import { PrintMaterial } from "@haus/db-common/print-material/model/print-material";
-import { UserRating } from "@haus/db-common/user-rating/model/user-rating";
-import { ImageInfo } from "@haus/db-common/image-info/model/image-info";
-import { ModelInfo } from "@haus/db-common/model-info/model/model-info";
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { AutoMap } from '@automapper/classes';
+import { prop, Ref } from '@typegoose/typegoose';
+import { PrintMaterial } from '@haus/db-common/print-material/model/print-material';
+import { UserRating } from '@haus/db-common/user-rating/model/user-rating';
+import { ImageInfo } from '@haus/db-common/image-info/model/image-info';
+import { ModelInfo } from '@haus/db-common/model-info/model/model-info';
 
 export class ShopItem extends TimeStamps {
     @AutoMap()
@@ -12,7 +12,7 @@ export class ShopItem extends TimeStamps {
 
     @AutoMap()
     @prop({ required: true })
-    name: string; 
+    name: string;
 
     @AutoMap()
     @prop({ required: true, maxlength: 300 })
@@ -23,7 +23,7 @@ export class ShopItem extends TimeStamps {
     creator: string;
 
     @prop({ required: true, ref: () => PrintMaterial })
-    material: Ref<PrintMaterial>
+    material: Ref<PrintMaterial>;
 
     @AutoMap()
     @prop({ required: true, min: 0 })
@@ -51,7 +51,7 @@ export class ShopItem extends TimeStamps {
     galleryPhotos: Ref<ImageInfo>[];
 
     @prop({ required: true, ref: () => ModelInfo })
-    modelFile: Ref<ModelInfo>
+    modelFile: Ref<ModelInfo>;
 
     @AutoMap()
     @prop({ required: true, default: false })

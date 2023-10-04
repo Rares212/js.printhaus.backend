@@ -1,9 +1,10 @@
 import { prop, Ref } from '@typegoose/typegoose';
 import { AutoMap } from '@automapper/classes';
 import { PrintMaterialUseType } from '@printhaus/common';
-import { PrintMaterialType } from "@haus/db-common/print-material-type/model/print-material-type";
+import { PrintMaterialType } from '@haus/db-common/print-material-type/model/print-material-type';
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
-export class PrintMaterial {
+export class PrintMaterial extends TimeStamps {
     @AutoMap()
     id: string;
 
@@ -34,7 +35,7 @@ export class PrintMaterial {
     @AutoMap()
     costCurrency: string;
 
-    @prop({ required: true, enum: PrintMaterialUseType })
+    @prop({ required: true, enum: PrintMaterialUseType, type: String })
     useType: PrintMaterialUseType;
 
     @prop({ required: true, default: 0 })

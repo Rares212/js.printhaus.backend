@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import * as dotenv from 'dotenv';
-import { ConfigService } from "@nestjs/config";
-import { CONFIG_KEYS } from "@src/common/util/config-keys.enum";
+import { ConfigService } from '@nestjs/config';
+import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
 
 @Injectable()
 export class JwtStrategyService extends PassportStrategy(Strategy) {
@@ -14,13 +14,13 @@ export class JwtStrategyService extends PassportStrategy(Strategy) {
                 cache: true,
                 rateLimit: true,
                 jwksRequestsPerMinute: 5,
-                jwksUri: `${configService.get(CONFIG_KEYS.AUTH.ISSUER)}.well-known/jwks.json`,
+                jwksUri: `${configService.get(CONFIG_KEYS.AUTH.ISSUER)}.well-known/jwks.json`
             }),
 
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             audience: configService.get(CONFIG_KEYS.AUTH.AUDIENCE),
             issuer: configService.get(CONFIG_KEYS.AUTH.ISSUER),
-            algorithms: [configService.get(CONFIG_KEYS.AUTH.ALGORITHM)],
+            algorithms: [configService.get(CONFIG_KEYS.AUTH.ALGORITHM)]
         });
     }
 

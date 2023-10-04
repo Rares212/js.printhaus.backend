@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus} from "@nestjs/common";
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class FileSizeException extends HttpException {
     constructor(msg: string = 'File size is too large') {

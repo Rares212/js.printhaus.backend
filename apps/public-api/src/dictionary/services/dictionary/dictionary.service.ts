@@ -1,9 +1,9 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from '@nestjs/common';
 import { DictionaryValueDto } from '@printhaus/common';
-import { DictionaryValueRepo } from '@src/dictionary/repos/dictionary-value/dictionary-value.repo';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { DictionaryValue } from '@src/dictionary/models/dictionary-value';
+import { DictionaryValueRepo } from '@haus/db-common/dictionary-value/repo/dictionary-value.repo';
+import { DictionaryValue } from '@haus/db-common/dictionary-value/model/dictionary-value';
 
 @Injectable()
 export class DictionaryService {
@@ -11,7 +11,7 @@ export class DictionaryService {
 
     constructor(
         private readonly dictionaryValueRepo: DictionaryValueRepo,
-        @InjectMapper() private readonly mapper: Mapper,
+        @InjectMapper() private readonly mapper: Mapper
     ) {}
 
     // @Cacheable({key: 'DICTIONARY_VALUE'})
@@ -24,7 +24,6 @@ export class DictionaryService {
             .catch((err) => {
                 this.logger.warn(err);
                 return null;
-            }
-        );
+            });
     }
 }

@@ -1,28 +1,36 @@
 import { Module } from '@nestjs/common';
-import { SchemaModule } from '@src/common/schema/schema.module';
 import { ConfigService } from '@nestjs/config';
 import { getModelToken } from 'nestjs-typegoose';
-import { PrintMaterial } from '@src/printing/models/print-material';
-import { PrintMaterialType } from '@src/printing/models/print-material-type';
-import { FileInfo } from '@src/haus-file/models/file-info';
 import { getModelForClass } from '@typegoose/typegoose';
 import uploadFeature from '@adminjs/upload';
-import { CONFIG_KEYS } from '@src/common/util/config-keys.enum';
 import { AdminModule } from '@adminjs/nestjs';
-import { DictionaryValue } from '@src/dictionary/models/dictionary-value';
-import { ShopItem } from '@src/shop/models/shop.item';
-import { HausUser } from '@src/auth/models/haus-user';
+import { DbCommonModule } from '@haus/db-common';
+import { PrintMaterial } from '@haus/db-common/print-material/model/print-material';
+import { PrintMaterialType } from '@haus/db-common/print-material-type/model/print-material-type';
+import { FileInfo } from '@haus/db-common/file-info/model/file-info';
+import { DictionaryValue } from '@haus/db-common/dictionary-value/model/dictionary-value';
+import { ShopItem } from '@haus/db-common/shop-item/model/shop.item';
+import { ImageInfo } from '@haus/db-common/image-info/model/image-info';
+import { ModelInfo } from '@haus/db-common/model-info/model/model-info';
+import { PRINT_MATERIAL_RESOURCE } from './resources/print-material.resource';
+import { PRINT_MATERIAL_TYPE_RESOURCE } from './resources/print-material-type.resource';
+import { DICTIONARY_VALUE_RESOURCE } from './resources/dictionary-value.resource';
+import { SHOP_ITEM_RESOURCE } from './resources/shop-item.resource';
+import { AUTH_USER_RESOURCE } from './resources/auth-user.resource';
+import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
 
 @Module({
     imports: [
         AdminModule.createAdminAsync({
-            imports: [SchemaModule],
+            imports: [DbCommonModule],
             inject: [
                 ConfigService,
                 getModelToken(PrintMaterial.name),
                 getModelToken(PrintMaterialType.name),
                 getModelToken(FileInfo.name),
                 getModelToken(DictionaryValue.name),
+                getModelToken(ImageInfo.name),
+                getModelToken(ModelInfo.name),
                 getModelToken(ShopItem.name)
             ],
             useFactory: (configService: ConfigService) => {
@@ -30,195 +38,11 @@ import { HausUser } from '@src/auth/models/haus-user';
                     adminJsOptions: {
                         rootPath: '/admin',
                         resources: [
-                            {
-                                resource: getModelForClass(PrintMaterial),
-                                properties: {
-                                    createdAt: {
-                                        isVisible: {
-                                            list: true,
-                                            filter: true,
-                                            show: true,
-                                            edit: false
-                                        }
-                                    },
-                                    updatedAt: {
-                                        isVisible: {
-                                            list: true,
-                                            filter: true,
-                                            show: true,
-                                            edit: false
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                resource: getModelForClass(PrintMaterialType),
-                                options: {
-                                    properties: {
-                                        shortName: {
-                                            isTitle: true
-                                        },
-                                        createdAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        updatedAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                resource: getModelForClass(DictionaryValue),
-                                options: {
-                                    properties: {
-                                        createdAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        updatedAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                resource: getModelForClass(ShopItem),
-                                options: {
-                                    properties: {
-                                        createdAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        updatedAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                resource: getModelForClass(HausUser),
-                                options: {
-                                    properties: {
-                                        createdAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        updatedAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                resource: getModelForClass(FileInfo),
-                                options: {
-                                    properties: {
-                                        comment: {
-                                            type: 'textarea',
-                                            isSortable: false
-                                        },
-                                        createdAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        updatedAt: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        s3Key: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        mime: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        },
-                                        bucket: {
-                                            isVisible: {
-                                                list: true,
-                                                filter: true,
-                                                show: true,
-                                                edit: false
-                                            }
-                                        }
-                                    }
-                                },
-                                features: [
-                                    uploadFeature({
-                                        provider: {
-                                            aws: {
-                                                region: configService.get(CONFIG_KEYS.AWS_S3.REGION),
-                                                bucket: configService.get(CONFIG_KEYS.AWS_S3.IMAGE_BUCKET_NAME),
-                                                accessKeyId: configService.get(CONFIG_KEYS.AWS_S3.ACCESS_KEY),
-                                                secretAccessKey: configService.get(CONFIG_KEYS.AWS_S3.SECRET_ACCESS_KEY)
-                                            }
-                                        },
-                                        properties: {
-                                            key: 's3Key',
-                                            mimeType: 'mime',
-                                            bucket: 'bucket'
-                                        },
-                                        validation: {
-                                            maxSize:
-                                                configService.get(CONFIG_KEYS.IMAGE.MAX_IMAGE_SIZE_MB) * 1024 * 1024,
-                                            mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-                                        }
-                                    })
-                                ]
-                            }
+                            PRINT_MATERIAL_RESOURCE,
+                            PRINT_MATERIAL_TYPE_RESOURCE,
+                            DICTIONARY_VALUE_RESOURCE,
+                            SHOP_ITEM_RESOURCE,
+                            AUTH_USER_RESOURCE
                         ]
                     },
                     auth: {

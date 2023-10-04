@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PrintCostService } from './services/print-cost/print-cost.service';
 import { ExchangeRateService } from './services/exchange-rate/exchange-rate.service';
-import { CommonModule } from "@src/common/common.module";
+import { DictionaryModule } from '../dictionary/dictionary.module';
 
 @Module({
-  imports: [
-    CommonModule
-  ],
-  providers: [PrintCostService, ExchangeRateService]
+    imports: [DictionaryModule],
+    providers: [PrintCostService, ExchangeRateService]
 })
 export class ShopModule {}

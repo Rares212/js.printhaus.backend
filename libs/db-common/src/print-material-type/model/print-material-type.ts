@@ -1,7 +1,7 @@
-import { AutoMap } from "@automapper/classes";
-import { prop, Ref } from "@typegoose/typegoose";
-import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
-import { FileInfo } from "@haus/db-common/file-info/model/file-info";
+import { AutoMap } from '@automapper/classes';
+import { prop, Ref } from '@typegoose/typegoose';
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { FileInfo } from '@haus/db-common/file-info/model/file-info';
 
 export class PrintMaterialType extends TimeStamps {
     @AutoMap()

@@ -37,3 +37,4 @@ lerna-debug.log*
 src/config/
 /.adminjs/
 /apps/public-api/src/env-config/
+/apps/admin-dashboard/src/env-config/

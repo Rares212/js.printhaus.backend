@@ -1,9 +1,9 @@
 import { Body, Controller, Get, HttpCode, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { PrintProcessingService } from '../../services/print-processing/print-processing.service';
-import { PrintModelDetailsReqDto } from '@src/printing/models/print-model-details.req.dto';
 import { PrintMaterialDto, PrintModelDetailsRespDto } from '@printhaus/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PrintMaterialService } from '@src/printing/services/print-material/print-material.service';
+import { PrintMaterialService } from '../../services/print-material/print-material.service';
+import { PrintModelDetailsReqDto } from '../../models/print-model-details.req.dto';
 
 @Controller('print')
 export class PrintController {

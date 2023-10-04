@@ -1,7 +1,7 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { createMap, forMember, mapFrom, Mapper, MappingProfile } from '@automapper/core';
 import { PrintDimensionsDto, ShopItemDto } from '@printhaus/common';
-import { ShopItem } from "@haus/db-common/shop-item/model/shop.item";
+import { ShopItem } from '@haus/db-common/shop-item/model/shop.item';
 
 export class ShopItemProfile extends AutomapperProfile {
     constructor(@InjectMapper() mapper: Mapper) {

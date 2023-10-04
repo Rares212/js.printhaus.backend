@@ -1,4 +1,4 @@
-export const IMAGE_CONSTANTS = {
+export const IMAGE_CONSTANTS: Record<string, ImageConstant> = {
     SMALL_IMAGE: {
         WIDTH: 256,
         POSTFIX: '-small'
@@ -11,4 +11,9 @@ export const IMAGE_CONSTANTS = {
         WIDTH: 1024,
         POSTFIX: '-large'
     }
+};
+
+interface ImageConstant {
+    WIDTH: number;
+    POSTFIX: string;
 }

@@ -2,7 +2,7 @@ import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { createMap, forMember, mapFrom, Mapper, MappingProfile } from '@automapper/core';
 import { PrintMaterialDto } from '@printhaus/common';
 import { Types } from 'mongoose';
-import { PrintMaterial } from "@haus/db-common/print-material/model/print-material";
+import { PrintMaterial } from '@haus/db-common/print-material/model/print-material';
 
 export class PrintMaterialProfile extends AutomapperProfile {
     constructor(@InjectMapper() mapper: Mapper) {

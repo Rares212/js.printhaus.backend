@@ -1,14 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrintMaterialDto, PrintMaterialUseType } from '@printhaus/common';
-import { PrintMaterial } from '@src/printing/models/print-material';
-import { PrintMaterialRepo } from '@src/printing/repos/print-material/print-material.repo';
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { InjectModel } from 'nestjs-typegoose';
-import { PrintMaterialType } from '@src/printing/models/print-material-type';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
-import { PrintMaterialTypeRepo } from "@src/printing/repos/print-material-type/print-material-type.repo";
+import { PrintMaterialRepo } from '@haus/db-common/print-material/repo/print-material.repo';
+import { PrintMaterialTypeRepo } from '@haus/db-common/print-material-type/repo/print-material-type.repo';
+import { PrintMaterial } from '@haus/db-common/print-material/model/print-material';
 
 @Injectable()
 export class PrintMaterialService {
@@ -35,6 +32,7 @@ export class PrintMaterialService {
 
         const materialTypeShortNameMap = new Map<string, string>();
         materialTypes.forEach((mt) => {
+            // @ts-ignore
             materialTypeShortNameMap.set(mt._id.toString(), mt.shortName);
         });
 

@@ -1,28 +1,17 @@
 import { Module } from '@nestjs/common';
 import { PrintController } from './controllers/print/print.controller';
 import { PrintProcessingService } from './services/print-processing/print-processing.service';
-import { PrintMaterialRepo } from '@haus/db-common/db-common/print-material/repo/print-material.repo';
 import { PrintCostService } from '../shop/services/print-cost/print-cost.service';
-import { SchemaModule } from '../common/schema/schema.module';
-import { PrintMaterialProfile } from '@src/printing/models/print-material.profile';
-import { PrintMaterialTypeProfile } from '@src/printing/models/print-material-type.profile';
-import { CommonModule } from '@src/common/common.module';
-import { PrintMaterialService } from "@src/printing/services/print-material/print-material.service";
-import { PrintMaterialTypeRepo } from "@src/printing/repos/print-material-type/print-material-type.repo";
+import { DictionaryModule } from '../dictionary/dictionary.module';
+import { AutomapperModule } from '@automapper/nestjs';
+import { PrintMaterialDbModule } from '@haus/db-common/print-material/print-material-db.module';
+import { PrintMaterialTypeDbModule } from '@haus/db-common/print-material-type/print-material-type-db.module';
+import { DbCommonModule } from '@haus/db-common';
+import { PrintMaterialService } from './services/print-material/print-material.service';
 
 @Module({
     controllers: [PrintController],
-    providers: [
-        PrintProcessingService,
-        PrintCostService,
-
-        PrintMaterialRepo,
-        PrintMaterialProfile,
-        PrintMaterialService,
-
-        PrintMaterialTypeRepo,
-        PrintMaterialTypeProfile,
-    ],
-    imports: [CommonModule, SchemaModule]
+    providers: [PrintMaterialService, PrintProcessingService, PrintCostService],
+    imports: [DictionaryModule, DbCommonModule, AutomapperModule]
 })
 export class PrintingModule {}

@@ -2,17 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DictionaryValueRepo } from './dictionary-value.repo';
 
 describe('DictionaryValueRepo', () => {
-  let service: DictionaryValueRepo;
+    let service: DictionaryValueRepo;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [DictionaryValueRepo],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DictionaryValueRepo]
+        }).compile();
 
-    service = module.get<DictionaryValueRepo>(DictionaryValueRepo);
-  });
+        service = module.get<DictionaryValueRepo>(DictionaryValueRepo);
+    });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });
