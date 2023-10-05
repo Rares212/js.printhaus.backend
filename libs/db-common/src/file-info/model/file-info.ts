@@ -13,7 +13,7 @@ export class FileInfo extends TimeStamps {
     @prop({ required: false, unique: true, index: true })
     s3Key: string;
 
-    @prop({ required: false, unique: true })
+    @prop({ required: false })
     bucket: string;
 
     @AutoMap()

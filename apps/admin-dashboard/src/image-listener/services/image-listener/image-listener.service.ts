@@ -1,20 +1,22 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { ConfigService } from '@nestjs/config';
-import { Readable } from 'stream';
 import * as sharp from 'sharp';
 import { WebpOptions } from 'sharp';
+import { InjectModel } from 'nestjs-typegoose';
 import { FileInfo } from '@haus/db-common/file-info/model/file-info';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { AwsS3Service } from '@haus/api-common/file-storage/services/aws-s3/aws-s3.service';
-import { IMAGE_CONSTANTS } from '../../../image-info/util/image-info.util';
+import { ConfigService } from '@nestjs/config';
+import { Readable } from 'stream';
 import { streamToBuffer } from '@haus/api-common/util/stream.util';
+import { IMAGE_CONSTANTS } from '../../../../../public-api/src/image-info/util/image-info.util';
+import { ImageInfo } from '@haus/db-common/image-info/model/image-info';
+import { Types } from 'mongoose';
 
 @Injectable()
-export class FileListenerService implements OnModuleInit, OnModuleDestroy {
+export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
     private changeStream: any;
 
-    private readonly logger = new Logger(FileListenerService.name);
+    private readonly logger = new Logger(ImageListenerService.name);
     private readonly webpSettings: WebpOptions = {
         quality: 80,
         lossless: false,
@@ -26,6 +28,7 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
 
     constructor(
         @InjectModel(FileInfo) private fileInfoModel: ReturnModelType<typeof FileInfo>,
+        @InjectModel(ImageInfo) private imageInfoModel: ReturnModelType<typeof ImageInfo>,
         private s3Service: AwsS3Service,
         private configService: ConfigService
     ) {}
@@ -68,24 +71,34 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
                 if (originalImage.Body instanceof Readable) {
                     const imageBuffer = await streamToBuffer(originalImage.Body);
 
+                    let thumbnails: FileInfo[] = [];
                     for (const key in IMAGE_CONSTANTS) {
-                        await this.generateThumbnail(
-                            imageBuffer,
-                            fileInfo,
-                            IMAGE_CONSTANTS[key].WIDTH,
-                            IMAGE_CONSTANTS[key].POSTFIX
+                        thumbnails.push(
+                            await this.generateThumbnail(
+                                imageBuffer,
+                                fileInfo,
+                                IMAGE_CONSTANTS[key].WIDTH,
+                                IMAGE_CONSTANTS[key].POSTFIX
+                            )
                         );
                     }
 
                     if (fileInfo.mime !== this.webpMimeType) {
                         await this.convertImageToWebp(imageBuffer, fileInfo);
                     }
+
+                    await this.createImageInfoRecord(fileInfo, thumbnails);
                 }
             }
         }
     }
 
-    private async generateThumbnail(image: Buffer, fileInfo: FileInfo, width: number, postfix: string) {
+    private async generateThumbnail(
+        image: Buffer,
+        fileInfo: FileInfo,
+        width: number,
+        postfix: string
+    ): Promise<FileInfo> {
         // Resize the image to create a thumbnail
         const thumbnailBuffer = await sharp(image).resize(width).webp(this.webpSettings).toBuffer();
 
@@ -99,7 +112,7 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
                 existingThumbnailFileInfo.bucket,
                 existingThumbnailFileInfo.s3Key
             );
-            return;
+            return existingThumbnailFileInfo;
         }
 
         // Upload the thumbnail to S3
@@ -113,7 +126,36 @@ export class FileListenerService implements OnModuleInit, OnModuleDestroy {
         thumbnailFileInfo.mime = this.webpMimeType;
         thumbnailFileInfo.comment = `Thumbnail (${width}px) for ${fileInfo.title}`;
 
-        await this.fileInfoModel.create(thumbnailFileInfo);
+        return this.fileInfoModel.create(thumbnailFileInfo);
+    }
+
+    private async createImageInfoRecord(fileInfo: FileInfo, thumbnailFileInfos: FileInfo[]) {
+        // Find imageInfo by title or create a new one
+        let imageInfo: ImageInfo = await this.imageInfoModel.findOne({ title: fileInfo.title }).exec();
+        if (imageInfo) {
+            return;
+        }
+
+        imageInfo = new ImageInfo();
+        imageInfo.title = fileInfo.title;
+        imageInfo.originalImage = new Types.ObjectId(fileInfo.id);
+        imageInfo.imageSmall = new Types.ObjectId(
+            thumbnailFileInfos.find((thumbnailFileInfo) =>
+                thumbnailFileInfo.title.endsWith(IMAGE_CONSTANTS['SMALL_IMAGE'].POSTFIX)
+            ).id
+        );
+        imageInfo.imageMedium = new Types.ObjectId(
+            thumbnailFileInfos.find((thumbnailFileInfo) =>
+                thumbnailFileInfo.title.endsWith(IMAGE_CONSTANTS['MEDIUM_IMAGE'].POSTFIX)
+            ).id
+        );
+        imageInfo.imageLarge = new Types.ObjectId(
+            thumbnailFileInfos.find((thumbnailFileInfo) =>
+                thumbnailFileInfo.title.endsWith(IMAGE_CONSTANTS['LARGE_IMAGE'].POSTFIX)
+            ).id
+        );
+
+        await this.imageInfoModel.create(imageInfo);
     }
 
     private async convertImageToWebp(image: Buffer, fileInfo: FileInfo) {

@@ -8,6 +8,7 @@ import { AutomapperModule } from "@automapper/nestjs";
 import { classes } from "@automapper/classes";
 import { AdminModule } from "@adminjs/nestjs";
 import { ADMIN_MODULE_FACTORY } from "./admin/config/admin-module.factory";
+import { ImageListenerModule } from './image-listener/image-listener.module';
 
 
 const envFilePath: string = getEnvPath(`${__dirname}/src/env-config`);
@@ -22,7 +23,8 @@ const envFilePath: string = getEnvPath(`${__dirname}/src/env-config`);
             envFilePath: envFilePath
         }),
         DbCommonModule,
-        AdminModule.createAdminAsync(ADMIN_MODULE_FACTORY)
+        AdminModule.createAdminAsync(ADMIN_MODULE_FACTORY),
+        ImageListenerModule
     ],
     controllers: [],
     providers: []
