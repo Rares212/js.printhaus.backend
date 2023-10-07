@@ -8,9 +8,9 @@ import { AwsS3Service } from '@haus/api-common/file-storage/services/aws-s3/aws-
 import { ConfigService } from '@nestjs/config';
 import { Readable } from 'stream';
 import { streamToBuffer } from '@haus/api-common/util/stream.util';
-import { IMAGE_CONSTANTS } from '../../../../../public-api/src/image-info/util/image-info.util';
 import { ImageInfo } from '@haus/db-common/image-info/model/image-info';
 import { Types } from 'mongoose';
+import { IMAGE_CONSTANTS } from "@haus/api-common/image-info/util/image-info.util";
 
 @Injectable()
 export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
@@ -25,6 +25,7 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
         effort: 4
     };
     private readonly webpMimeType = 'image/webp';
+    private readonly webpExtension = '.webp';
 
     constructor(
         @InjectModel(FileInfo) private fileInfoModel: ReturnModelType<typeof FileInfo>,
@@ -59,17 +60,22 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
                 return;
             }
 
+            // AdminJS first creates a document with only the title and then updates it with the rest of the fields
             if (!fileInfo.mime || !fileInfo.bucket || !fileInfo.s3Key) {
-                this.logger.warn(`File info document ${fileInfo.title} is missing mime, bucket, or s3Key`);
                 return;
             }
 
             if (fileInfo.mime.startsWith('image/')) {
-                // Download the original image from S3
                 const originalImage = await this.s3Service.getFile(fileInfo.s3Key, fileInfo.bucket);
 
                 if (originalImage.Body instanceof Readable) {
                     const imageBuffer = await streamToBuffer(originalImage.Body);
+
+                    // This will update the file info. The thumbnails will be generated in the next update event
+                    if (fileInfo.mime !== this.webpMimeType) {
+                        await this.convertImageToWebp(imageBuffer, fileInfo);
+                        return;
+                    }
 
                     let thumbnails: FileInfo[] = [];
                     for (const key in IMAGE_CONSTANTS) {
@@ -81,10 +87,6 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
                                 IMAGE_CONSTANTS[key].POSTFIX
                             )
                         );
-                    }
-
-                    if (fileInfo.mime !== this.webpMimeType) {
-                        await this.convertImageToWebp(imageBuffer, fileInfo);
                     }
 
                     await this.createImageInfoRecord(fileInfo, thumbnails);
@@ -99,10 +101,8 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
         width: number,
         postfix: string
     ): Promise<FileInfo> {
-        // Resize the image to create a thumbnail
         const thumbnailBuffer = await sharp(image).resize(width).webp(this.webpSettings).toBuffer();
 
-        // Check if thumbnail already exists and update it
         const existingThumbnailFileInfo: FileInfo = await this.fileInfoModel
             .findOne({ title: `${fileInfo.title}${postfix}` })
             .exec();
@@ -112,11 +112,15 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
                 existingThumbnailFileInfo.bucket,
                 existingThumbnailFileInfo.s3Key
             );
+            this.logger.log(`Updated thumbnail ${existingThumbnailFileInfo.title}`);
             return existingThumbnailFileInfo;
         }
 
+        // Generate s3 key with the postfix
+        const thumbnailFileKey = fileInfo.s3Key.replace(/\.[^/.]+$/, `${postfix}${this.webpExtension}`);
+
         // Upload the thumbnail to S3
-        const thumbnailUploadResult = await this.s3Service.uploadFile(thumbnailBuffer, fileInfo.bucket);
+        const thumbnailUploadResult = await this.s3Service.uploadFile(thumbnailBuffer, fileInfo.bucket, thumbnailFileKey);
 
         // Insert a new FileInfo document with the thumbnail details
         const thumbnailFileInfo = new FileInfo();
@@ -126,7 +130,9 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
         thumbnailFileInfo.mime = this.webpMimeType;
         thumbnailFileInfo.comment = `Thumbnail (${width}px) for ${fileInfo.title}`;
 
-        return this.fileInfoModel.create(thumbnailFileInfo);
+        const createdFile: FileInfo = await this.fileInfoModel.create(thumbnailFileInfo);
+        this.logger.log(`Created thumbnail ${thumbnailFileInfo.title}`);
+        return createdFile;
     }
 
     private async createImageInfoRecord(fileInfo: FileInfo, thumbnailFileInfos: FileInfo[]) {
@@ -156,14 +162,21 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
         );
 
         await this.imageInfoModel.create(imageInfo);
+
+        this.logger.log(`Created image info record for ${fileInfo.title}`);
     }
 
     private async convertImageToWebp(image: Buffer, fileInfo: FileInfo) {
         const webpBuffer = await sharp(image).webp(this.webpSettings).toBuffer();
 
-        await this.s3Service.uploadFile(webpBuffer, fileInfo.bucket, fileInfo.s3Key);
+        const webpFileKey = fileInfo.s3Key.replace(/\.[^/.]+$/, this.webpExtension);
+        await this.s3Service.uploadFile(webpBuffer, fileInfo.bucket, webpFileKey);
 
-        await this.fileInfoModel.findByIdAndUpdate(fileInfo.id, { mime: this.webpMimeType }).exec();
+        await this.s3Service.deleteFile(fileInfo.s3Key, fileInfo.bucket);
+
+        await this.fileInfoModel.findByIdAndUpdate(fileInfo.id, { mime: this.webpMimeType, s3Key: webpFileKey }).exec();
+
+        this.logger.log(`Converted ${fileInfo.title} to webp`);
     }
 
     private endsWithAnyPostfix(title: string): boolean {

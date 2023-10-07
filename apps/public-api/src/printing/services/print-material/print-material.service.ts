@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from "@nestjs/common";
 import { PrintMaterialDto, PrintMaterialUseType } from '@printhaus/common';
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
@@ -17,7 +17,6 @@ export class PrintMaterialService {
         @InjectMapper() private mapper: Mapper
     ) {}
 
-    // Fetch the material list and populate the material type short name
     public async getPublicMaterialList(): Promise<PrintMaterialDto[]> {
         const materials: PrintMaterial[] = await this.printMaterialRepo.findAllByUseTypes([
             PrintMaterialUseType.CUSTOM_PRINTS,
@@ -42,5 +41,21 @@ export class PrintMaterialService {
         });
 
         return materialDtoList;
+    }
+
+    public async getMaterial(id: string | Types.ObjectId): Promise<PrintMaterialDto> {
+        const material = await this.printMaterialRepo.findById(id);
+
+        if (!material) {
+            throw new HttpException('Material not found', 404);
+        }
+
+        const materialDto = this.mapper.map(material, PrintMaterial, PrintMaterialDto);
+
+        const materialType = (await this.printMaterialTypeRepo.findShortNamesByMaterialTypeIds([new Types.ObjectId(material.materialType.id)]))[0];
+
+        materialDto.materialTypeShortName = materialType.shortName;
+
+        return materialDto;
     }
 }

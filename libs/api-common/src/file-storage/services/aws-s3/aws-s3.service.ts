@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
-import { GetObjectCommand, GetObjectOutput, PutObjectCommand, PutObjectOutput, S3Client } from '@aws-sdk/client-s3';
+import {
+    DeleteObjectCommand,
+    GetObjectCommand,
+    GetObjectOutput,
+    PutObjectCommand,
+    PutObjectOutput,
+    S3Client
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
 
@@ -43,7 +50,16 @@ export class AwsS3Service {
         return this.s3.send(command);
     }
 
-    async createPresignedUrl(fileKey: string, bucketName: string, expiration: number = 3600): Promise<string> {
+    async deleteFile(fileKey: string, bucketName: string): Promise<void> {
+        const command = new DeleteObjectCommand({
+            Bucket: bucketName,
+            Key: fileKey
+        });
+
+        await this.s3.send(command);
+    }
+
+    async createSignedUrl(fileKey: string, bucketName: string, expiration: number = 3600): Promise<string> {
         const command = new GetObjectCommand({
             Bucket: bucketName,
             Key: fileKey
@@ -51,6 +67,10 @@ export class AwsS3Service {
 
         // @ts-ignore
         return getSignedUrl(this.s3 as Client, command, { expiresIn: expiration });
+    }
+
+    async getPublicUrl(fileKey: string, bucketName: string): Promise<string> {
+        return `https://${bucketName}.s3.${this.configService.get(CONFIG_KEYS.AWS_S3.REGION)}.amazonaws.com/${fileKey}`;
     }
 }
 

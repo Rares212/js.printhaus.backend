@@ -12,6 +12,7 @@ import { PrintMaterialService } from './services/print-material/print-material.s
 @Module({
     controllers: [PrintController],
     providers: [PrintMaterialService, PrintProcessingService, PrintCostService],
-    imports: [DictionaryModule, DbCommonModule, AutomapperModule]
+    imports: [DictionaryModule, DbCommonModule, AutomapperModule],
+    exports: [PrintMaterialService, PrintProcessingService, PrintCostService]
 })
 export class PrintingModule {}

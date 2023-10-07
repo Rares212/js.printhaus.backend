@@ -7,6 +7,6 @@ import { TypegooseModule } from 'nestjs-typegoose';
 @Module({
     imports: [TypegooseModule.forFeature([ImageInfo])],
     providers: [ImageInfoRepo, ImageInfoProfile],
-    exports: [ImageInfoRepo, TypegooseModule]
+    exports: [ImageInfoProfile, ImageInfoRepo, TypegooseModule]
 })
 export class ImageInfoDbModule {}

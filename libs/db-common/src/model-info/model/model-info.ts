@@ -8,6 +8,10 @@ export class ModelInfo extends TimeStamps {
     @AutoMap()
     id: string;
 
+    @AutoMap()
+    @prop({ required: true, unique: true, index: true })
+    title: string;
+
     @prop({ required: true, ref: () => FileInfo })
     file: FileInfo;
 }

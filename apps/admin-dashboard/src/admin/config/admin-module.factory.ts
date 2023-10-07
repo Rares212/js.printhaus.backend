@@ -19,12 +19,14 @@ import { AdminModuleOptions } from "@adminjs/nestjs";
 import { getPrintMaterialResource } from "../resources/print-material.resource";
 import { getPrintMaterialTypeResource } from "../resources/print-material-type.resource";
 import { getDictionaryValueResource } from "../resources/dictionary-value.resource";
-import { getFileInfoResource } from "../resources/file-info.resource";
 import { getModelInfoResource } from "../resources/model-info.resource";
 import { getShopItemResource } from "../resources/shop-item.resource";
 import { getUserRatingResource } from "../resources/user-rating.resource";
 import { getAuthUserResource } from "../resources/auth-user.resource";
 import { CONFIG_KEYS } from "@haus/api-common/config/util/config-keys.enum";
+import { getImageInfoResource } from "../resources/image-info.resource";
+import { getFileInfoModelsResource } from "../resources/file-info-models.resource";
+import { getFileInfoImageResource } from "../resources/file-info-image.resource";
 
 export const ADMIN_MODULE_FACTORY: AdminModuleFactory & CustomLoader = {
     imports: [DbCommonModule],
@@ -45,6 +47,7 @@ export const ADMIN_MODULE_FACTORY: AdminModuleFactory & CustomLoader = {
                  printMaterialTypeModel,
                  dictionaryValueModel,
                  fileInfoModel,
+                 imageInfoModel,
                  modelInfoModel,
                  shopItemModel,
                  authUserModel,
@@ -52,11 +55,18 @@ export const ADMIN_MODULE_FACTORY: AdminModuleFactory & CustomLoader = {
         const options: AdminModuleOptions = {
             adminJsOptions: {
                 rootPath: '/admin',
+                branding: {
+                    companyName: 'Printhaus',
+                    // logo: 'https://printhaus-dev-public-images.s3.eu-central-1.amazonaws.com/f49c9268-baa0-490a-bc00-55c054a2f056'
+                    logo: false
+                },
                 resources: [
                     getPrintMaterialResource(printMaterialModel),
                     getPrintMaterialTypeResource(printMaterialTypeModel),
                     getDictionaryValueResource(dictionaryValueModel),
-                    getFileInfoResource(fileInfoModel, configService),
+                    getFileInfoImageResource(fileInfoModel, configService),
+                    getFileInfoModelsResource(fileInfoModel, configService),
+                    getImageInfoResource(imageInfoModel),
                     getModelInfoResource(modelInfoModel),
                     getShopItemResource(shopItemModel),
                     getAuthUserResource(authUserModel),

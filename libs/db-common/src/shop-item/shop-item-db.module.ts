@@ -7,6 +7,6 @@ import { ShopItemProfile } from '@haus/db-common/shop-item/model/shop-item.profi
 @Module({
     imports: [TypegooseModule.forFeature([ShopItem])],
     providers: [ShopItemRepo, ShopItemProfile],
-    exports: [ShopItemRepo, TypegooseModule]
+    exports: [ShopItemProfile, ShopItemRepo, TypegooseModule]
 })
 export class ShopItemDbModule {}

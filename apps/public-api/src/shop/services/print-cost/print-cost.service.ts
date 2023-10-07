@@ -38,7 +38,6 @@ export class PrintCostService {
 
     private async calculateTimeCost(printTimeHours: number): Promise<PrintCostPartDto> {
         try {
-            console.log(DICTIONARY_KEYS.PRINT.COST_PER_HOUR);
             const dictionaryValue = await this.dictionaryService.findByKey(DICTIONARY_KEYS.PRINT.COST_PER_HOUR);
             const costPerHour: Dinero.Dinero = Dinero(JSON.parse(dictionaryValue.value));
             const cost: Dinero.Dinero = costPerHour.multiply(printTimeHours);

@@ -11,7 +11,7 @@ export class ShopItem extends TimeStamps {
     id: string;
 
     @AutoMap()
-    @prop({ required: true })
+    @prop({ required: true, unique: true, index: true })
     name: string;
 
     @AutoMap()
@@ -62,7 +62,7 @@ export class ShopItem extends TimeStamps {
     costAmount: number;
 
     @AutoMap()
-    @prop({ required: true, min: 0 })
+    @prop({ min: 0 })
     reducedCostAmount: number;
 
     @AutoMap()
@@ -70,6 +70,10 @@ export class ShopItem extends TimeStamps {
     costCurrency: string;
 
     @AutoMap()
+    @prop({ required: true, min: 0, default: 0 })
+    viewPriority: number;
+
+    @AutoMap({depth: 1})
     @prop({ required: false, type: [String], default: [], lowercase: true })
     tags: string[];
 }

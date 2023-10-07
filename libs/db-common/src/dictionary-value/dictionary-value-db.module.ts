@@ -7,6 +7,6 @@ import { TypegooseModule } from 'nestjs-typegoose';
 @Module({
     imports: [TypegooseModule.forFeature([DictionaryValue])],
     providers: [DictionaryValueProfile, DictionaryValueRepo],
-    exports: [DictionaryValueRepo, TypegooseModule]
+    exports: [DictionaryValueProfile, DictionaryValueRepo, TypegooseModule]
 })
 export class DictionaryValueDbModule {}

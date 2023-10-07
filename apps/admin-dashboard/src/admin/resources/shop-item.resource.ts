@@ -21,6 +21,14 @@ export function getShopItemResource(resource: ReturnModelType<typeof ShopItem>) 
                         show: true,
                         edit: false
                     }
+                },
+                ratings: {
+                    isVisible: {
+                        list: true,
+                        filter: true,
+                        show: true,
+                        edit: false
+                    }
                 }
             }
         }

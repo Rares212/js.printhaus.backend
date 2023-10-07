@@ -7,6 +7,6 @@ import { PrintMaterialTypeRepo } from '@haus/db-common/print-material-type/repo/
 @Module({
     imports: [TypegooseModule.forFeature([PrintMaterialType])],
     providers: [PrintMaterialTypeRepo, PrintMaterialTypeProfile],
-    exports: [PrintMaterialTypeRepo, TypegooseModule]
+    exports: [PrintMaterialTypeProfile, PrintMaterialTypeRepo, TypegooseModule]
 })
 export class PrintMaterialTypeDbModule {}

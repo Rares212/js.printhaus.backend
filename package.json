@@ -1,5 +1,5 @@
 {
-  "name": "printhaus",
+  "name": "printhaus-backend",
   "version": "0.0.1",
   "description": "",
   "author": "Rares",
@@ -9,10 +9,10 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
 
-    "start": "nest start",
-    "start:dev": "nest build --webpack --webpackPath webpack.config.js --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/apps/public-api/main",
+    "start-public-api": "nest start public-api",
+    "start-public-api:dev": "nest build public-api --webpack --webpackPath webpack.config.js --watch",
+    "start-public-api:debug": "nest start public-api --debug",
+    "start-public-api:prod": "node dist/apps/public-api/main",
 
     "start-admin": "nest start admin-dashboard",
     "start-admin:dev": "nest build admin-dashboard --webpack --webpackPath webpack.config.js --watch",
@@ -126,8 +126,8 @@
       "<rootDir>/apps/"
     ],
     "moduleNameMapper": {
-      "^@haus/db-common/db-common(|/.*)$": "<rootDir>/libs/db-common/src/$1",
-      "^@haus/api-common/api-common(|/.*)$": "<rootDir>/libs/api-common/src/$1"
+      "^@haus/db-common(|/.*)$": "<rootDir>/libs/db-common/src/$1",
+      "^@haus/api-common(|/.*)$": "<rootDir>/libs/api-common/src/$1"
     }
   }
 }

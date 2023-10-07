@@ -3,6 +3,7 @@ import { InjectModel } from 'nestjs-typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { MongoGenericRepository } from '@haus/db-common/common-schema/services/generic-repository/mongo-generic.repository';
 import { UserRating } from '@haus/db-common/user-rating/model/user-rating';
+import { Types } from "mongoose";
 
 @Injectable()
 export class UserRatingRepo extends MongoGenericRepository<UserRating> {
@@ -10,7 +11,7 @@ export class UserRatingRepo extends MongoGenericRepository<UserRating> {
         super(userRatingTypeModel);
     }
 
-    public async getRatingForShopItem(shopItemId: string): Promise<RatingResult> {
+    public async getRatingForShopItem(shopItemId: string | Types.ObjectId): Promise<RatingResult> {
         const result = await this.userRatingTypeModel
             .aggregate([
                 { $match: { shopItem: shopItemId } },

@@ -5,15 +5,13 @@ import { AuthUserModule } from './auth/auth-user.module';
 import { DbCommonModule } from '@haus/db-common';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
-import { FileInfoModule } from './file-info/file-info.module';
-import { ImageInfoModule } from './image-info/image-info.module';
+
 import { PrintingModule } from './printing/printing.module';
 import { ShopModule } from './shop/shop.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { DictionaryModule } from './dictionary/dictionary.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/src/env-config`);
-console.log(`envFilePath: ${envFilePath}`);
 
 @Module({
     imports: [
@@ -32,9 +30,7 @@ console.log(`envFilePath: ${envFilePath}`);
 
         DbCommonModule,
 
-        FileInfoModule,
         DictionaryModule,
-        ImageInfoModule,
         PrintingModule,
         ShopModule,
 

@@ -1,13 +1,19 @@
-import { ConfigService } from '@nestjs/config';
-import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
+import { ReturnModelType } from '@typegoose/typegoose';
 import { FileInfo } from '@haus/db-common/file-info/model/file-info';
+import { ConfigService } from '@nestjs/config';
 import uploadFeature from '@adminjs/upload';
 import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
+import { FileUtil } from "@haus/api-common/util/file.util";
 
-export function getFileInfoResource(resource: ReturnModelType<typeof FileInfo>,configService: ConfigService) {
+export function getFileInfoModelsResource(resource: ReturnModelType<typeof FileInfo>, configService: ConfigService) {
     return {
         resource: resource,
         options: {
+            id: 'FileInfo - Models',
+            sort: {
+                sortBy: 'updatedAt',
+                direction: 'desc'
+            },
             properties: {
                 comment: {
                     type: 'textarea',
@@ -60,19 +66,19 @@ export function getFileInfoResource(resource: ReturnModelType<typeof FileInfo>,c
                 provider: {
                     aws: {
                         region: configService.get(CONFIG_KEYS.AWS_S3.REGION),
-                        bucket: configService.get(CONFIG_KEYS.AWS_S3.IMAGE_BUCKET_NAME),
+                        bucket: configService.get(CONFIG_KEYS.AWS_S3.MODEL_BUCKET_NAME),
                         accessKeyId: configService.get(CONFIG_KEYS.AWS_S3.ACCESS_KEY),
                         secretAccessKey: configService.get(CONFIG_KEYS.AWS_S3.SECRET_ACCESS_KEY)
                     }
                 },
+                uploadPath: (record, filename) => FileUtil.generateFileKey(filename),
                 properties: {
                     key: 's3Key',
                     mimeType: 'mime',
                     bucket: 'bucket'
                 },
                 validation: {
-                    maxSize: configService.get(CONFIG_KEYS.IMAGE.MAX_IMAGE_SIZE_MB) * 1024 * 1024,
-                    mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+                    maxSize: 100 * 1024 * 1024
                 }
             })
         ]

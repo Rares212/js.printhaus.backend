@@ -7,6 +7,6 @@ import { InjectModel } from 'nestjs-typegoose';
 @Injectable()
 export class ModelInfoRepo extends MongoGenericRepository<ModelInfo> {
     constructor(@InjectModel(ModelInfo) private readonly modelInfo: ReturnModelType<typeof ModelInfo>) {
-        super(modelInfo);
+        super(modelInfo, ['file']);
     }
 }

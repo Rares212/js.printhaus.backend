@@ -7,6 +7,6 @@ import { AuthUserRepo } from '@haus/db-common/auth-user/repo/auth-user.repo';
 @Module({
     imports: [TypegooseModule.forFeature([AuthUser])],
     providers: [AuthUserProfile, AuthUserRepo],
-    exports: [AuthUserRepo, TypegooseModule]
+    exports: [AuthUserProfile, AuthUserRepo, TypegooseModule]
 })
 export class AuthUserDbModule {}

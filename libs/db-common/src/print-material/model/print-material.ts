@@ -3,6 +3,7 @@ import { AutoMap } from '@automapper/classes';
 import { PrintMaterialUseType } from '@printhaus/common';
 import { PrintMaterialType } from '@haus/db-common/print-material-type/model/print-material-type';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { HEX_COLOR_REGEX } from "@haus/api-common/util/validation.util";
 
 export class PrintMaterial extends TimeStamps {
     @AutoMap()
@@ -15,7 +16,7 @@ export class PrintMaterial extends TimeStamps {
     @prop({ required: true, ref: () => PrintMaterialType })
     materialType: Ref<PrintMaterialType>;
 
-    @prop({ required: true })
+    @prop({ required: true, validate: HEX_COLOR_REGEX, minlength: 7, maxlength: 7 })
     @AutoMap()
     color: string;
 
