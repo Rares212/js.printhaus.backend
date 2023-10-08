@@ -21,6 +21,10 @@ export class ShopItemProfile extends AutomapperProfile {
                 forMember(
                     (dest) => dest.dimensions,
                     mapFrom((src) => new PrintDimensionsDto(src.width, src.height, src.depth))
+                ),
+                forMember(
+                    (dest) => dest.tags,
+                    mapFrom((src) => [...src.tags])
                 )
             );
         };

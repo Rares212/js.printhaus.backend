@@ -70,10 +70,10 @@ export class ShopItem extends TimeStamps {
     costCurrency: string;
 
     @AutoMap()
-    @prop({ required: true, min: 0, default: 0 })
+    @prop({ required: true, min: 0, default: 0, index: true })
     viewPriority: number;
 
-    @AutoMap({depth: 1})
+    @AutoMap({depth: 2})
     @prop({ required: false, type: [String], default: [], lowercase: true })
     tags: string[];
 }

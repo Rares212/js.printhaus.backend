@@ -11,12 +11,10 @@
 
     "start-public-api": "nest start public-api",
     "start-public-api:dev": "nest build public-api --webpack --webpackPath webpack.config.js --watch",
-    "start-public-api:debug": "nest start public-api --debug",
     "start-public-api:prod": "node dist/apps/public-api/main",
 
     "start-admin": "nest start admin-dashboard",
     "start-admin:dev": "nest build admin-dashboard --webpack --webpackPath webpack.config.js --watch",
-    "start-admin:debug": "nest start admin-dashboard --debug --watch",
     "start-admin:prod": "node dist/apps/admin-dashboard/main",
 
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

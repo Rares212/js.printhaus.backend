@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { PublicApiModule } from './public-api.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as mongoose from "mongoose";
 
 async function bootstrap() {
     const app = await NestFactory.create(PublicApiModule, {
