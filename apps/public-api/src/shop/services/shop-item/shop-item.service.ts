@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ImageInfoService } from '@haus/api-common/image-info/services/image-info/image-info.service';
 import { ModelInfoService } from '@haus/api-common/model-info/services/model-info/model-info.service';
 import { ShopItemRepo } from '@haus/db-common/shop-item/repo/shop-item.repo';
-import { ImageInfoRespDto, PaginatedRequestDto, ShopItemDto } from '@printhaus/common';
+import { ImageInfoRespDto, ModelInfoRespDto, PaginatedRequestDto, ShopItemDto } from "@printhaus/common";
 import { Mapper } from '@automapper/core';
 import { ShopItem } from '@haus/db-common/shop-item/model/shop.item';
 import { UserRatingService } from '../user-rating/user-rating.service';
@@ -74,18 +74,18 @@ export class ShopItemService {
         return this.shopItemRepo.count();
     }
 
-    public async getShopItemModelUrl(id: string | Types.ObjectId): Promise<string> {
+    public async getShopItemModelUrl(id: string | Types.ObjectId): Promise<ModelInfoRespDto> {
         const cacheKey = `shopItemModelUrl-${id}`;
-        const cachedData = await this.cacheManager.get<string>(cacheKey);
+        const cachedData = await this.cacheManager.get<ModelInfoRespDto>(cacheKey);
         if (cachedData) {
             return cachedData;
         }
 
-        const url = await this.modelInfoService.getModelSignedUrl(
+        const modelInfoDto = await this.modelInfoService.getModelSignedUrl(
             await this.shopItemRepo.getModelInfoId(id),
             this.MODEL_INFO_URL_TTL_MS / 1000
         );
-        this.cacheManager.set(cacheKey, url, this.MODEL_INFO_CACHE_TTL_MS).catch((err) => this.logger.error(err));
-        return url;
+        this.cacheManager.set(cacheKey, modelInfoDto, this.MODEL_INFO_CACHE_TTL_MS).catch((err) => this.logger.error(err));
+        return modelInfoDto;
     }
 }

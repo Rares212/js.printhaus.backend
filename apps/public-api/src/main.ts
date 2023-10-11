@@ -9,6 +9,7 @@ async function bootstrap() {
     });
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
+    // mongoose.set('debug', true);
     app.setGlobalPrefix('printhaus-api');
 
     await app.listen(3000);

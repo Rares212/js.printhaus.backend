@@ -166,7 +166,7 @@ export class ImageListenerService implements OnModuleInit, OnModuleDestroy {
         this.logger.log(`Created image info record for ${fileInfo.title}`);
     }
 
-    private async convertImageToWebp(image: Buffer, fileInfo: FileInfo) {
+    private async convertImageToWebp(image: Buffer, fileInfo: FileInfo): Promise<void> {
         const webpBuffer = await sharp(image).webp(this.webpSettings).toBuffer();
 
         const webpFileKey = fileInfo.s3Key.replace(/\.[^/.]+$/, this.webpExtension);

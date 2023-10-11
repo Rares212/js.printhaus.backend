@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { ShopItemService } from "../../services/shop-item/shop-item.service";
-import { PaginatedRequestDto, ShopItemDto } from "@printhaus/common";
+import { ModelInfoRespDto, PaginatedRequestDto, ShopItemDto } from "@printhaus/common";
 
 @Controller('shop')
 export class ShopController {
@@ -18,7 +18,7 @@ export class ShopController {
     }
 
     @Get('item/model-signed-url')
-    public getModelSignedUrl(@Query('id') id: string): Promise<string> {
+    public getModelSignedUrl(@Query('id') id: string): Promise<ModelInfoRespDto> {
         return this.shopItemService.getShopItemModelUrl(id);
     }
 }

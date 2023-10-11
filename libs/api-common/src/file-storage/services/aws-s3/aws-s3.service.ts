@@ -11,6 +11,9 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
+import {
+    StreamingBlobPayloadInputTypes
+} from "@smithy/types/dist-types/streaming-payload/streaming-blob-payload-input-types";
 
 @Injectable()
 export class AwsS3Service {
@@ -26,7 +29,7 @@ export class AwsS3Service {
         });
     }
 
-    async uploadFile(file: Buffer, bucketName: string, key: string = uuidv4()): Promise<UploadResult> {
+    async uploadFile(file: StreamingBlobPayloadInputTypes, bucketName: string, key: string = uuidv4()): Promise<UploadResult> {
         const command = new PutObjectCommand({
             Bucket: bucketName,
             Body: file,

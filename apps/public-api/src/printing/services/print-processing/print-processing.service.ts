@@ -76,19 +76,12 @@ export class PrintProcessingService {
         if (this.cacheResults) {
             const fileHash: string = await this.computeHash(file);
 
-            decompressedFileBuffer = await this.cacheManager.get(`decompressedFileBuffer-${fileHash}`);
-            if (!decompressedFileBuffer) {
-                decompressedFileBuffer = gunzipSync(new Uint8Array(file.buffer));
-                this.cacheManager
-                    .set(`decompressedFileBuffer-${fileHash}`, decompressedFileBuffer, 1000 * 60)
-                    .catch(() => this.logger.error('Error caching decompressed file buffer!'));
-            }
-
             geometry = await this.cacheManager.get(`geometry-${fileHash}`);
             if (!geometry) {
+                decompressedFileBuffer = gunzipSync(new Uint8Array(file.buffer));
                 geometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
                 this.cacheManager
-                    .set(`geometry-${fileHash}`, geometry, 1000 * 60)
+                    .set(`geometry-${fileHash}`, geometry, 1000 * 60 * 2)
                     .catch(() => this.logger.error('Error caching geometry!'));
             }
         } else {
