@@ -9,7 +9,6 @@ import {
     NotFoundException
 } from '@nestjs/common';
 import {
-    DICTIONARY_KEYS,
     INTERNAL_INFILL_WEIGHT_PERCENTAGE,
     PrintCostPartDto,
     PrintDimensionsDto,
@@ -17,8 +16,8 @@ import {
     PrintModelDetailsRespDto,
     PRINT_QUALITY_SPEED_MULTIPLIER,
     PRINT_STRENGTH_INFILL,
-    SupportedMeshFileTypes
-} from '@printhaus/common';
+    SupportedMeshFileTypes, MeshParserService, DictionaryKey
+} from "@printhaus/common";
 
 import { ConfigService } from '@nestjs/config';
 import { CONFIG_KEYS } from '@haus/api-common/config/util/config-keys.enum';
@@ -36,15 +35,12 @@ import { PrintMaterialRepo } from '@haus/db-common/print-material/repo/print-mat
 import { DictionaryService } from '../../../dictionary/services/dictionary/dictionary.service';
 import { PrintModelDetailsReqDto } from '../../models/print-model-details.req.dto';
 import { PrintMaterial } from '@haus/db-common/print-material/model/print-material';
-import { STLLoader } from './stl-loader';
-import { OBJLoader } from './obj-loader';
-import { mergeGeometries } from './print-processing.utils';
+
 @Injectable()
 export class PrintProcessingService {
     private readonly logger = new Logger(PrintProcessingService.name);
     private readonly cacheResults: boolean = this.configService.get(CONFIG_KEYS.MESH.CACHE_MESHES);
-    private readonly stlLoader = new STLLoader();
-    private readonly objLoader = new OBJLoader();
+    private readonly meshParser = new MeshParserService();
 
     constructor(
         private printMaterialRepo: PrintMaterialRepo,
@@ -61,6 +57,7 @@ export class PrintProcessingService {
         file: Express.Multer.File,
         modelDetailsRequest: PrintModelDetailsReqDto
     ): Promise<PrintModelDetailsRespDto> {
+
         const material: PrintMaterial = await this.printMaterialRepo
             .findById(modelDetailsRequest.materialId)
             .catch(() => {
@@ -79,14 +76,15 @@ export class PrintProcessingService {
             geometry = await this.cacheManager.get(`geometry-${fileHash}`);
             if (!geometry) {
                 decompressedFileBuffer = gunzipSync(new Uint8Array(file.buffer));
-                geometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
+                geometry = this.meshParser.parseFile(decompressedFileBuffer.buffer, modelDetailsRequest.fileType);
+
                 this.cacheManager
                     .set(`geometry-${fileHash}`, geometry, 1000 * 60 * 2)
                     .catch(() => this.logger.error('Error caching geometry!'));
             }
         } else {
             decompressedFileBuffer = gunzipSync(new Uint8Array(file.buffer));
-            geometry = this.getGeometryFromFile(decompressedFileBuffer, modelDetailsRequest.fileType);
+            geometry = this.meshParser.parseFile(decompressedFileBuffer.buffer, modelDetailsRequest.fileType);
         }
 
         const totalCubicCm: number = this.getVolumeInCubicCentimeters(geometry);
@@ -126,32 +124,6 @@ export class PrintProcessingService {
         return response;
     }
 
-    public getGeometryFromFile(fileBuffer: Uint8Array, fileType: SupportedMeshFileTypes): BufferGeometry {
-        switch (fileType) {
-            case SupportedMeshFileTypes.STL: {
-                return this.stlLoader.parse(fileBuffer.buffer);
-            }
-            case SupportedMeshFileTypes.OBJ: {
-                const group: Group = this.objLoader.parse(fileBuffer.toString());
-                return this.combineMeshes(group);
-            }
-            default: {
-                throw new BadRequestException('Unsupported file type');
-            }
-        }
-    }
-
-    private combineMeshes(group: Group): BufferGeometry {
-        const geometries: BufferGeometry[] = [];
-        group.traverse((child: Object3D) => {
-            if (child instanceof Mesh) {
-                geometries.push(child.geometry);
-            }
-        });
-
-        return mergeGeometries(geometries, true);
-    }
-
     private getDimensions(geometry: BufferGeometry): PrintDimensionsDto {
         geometry.computeBoundingBox();
         const vectorSize: Vector3 = new Vector3();
@@ -160,7 +132,7 @@ export class PrintProcessingService {
     }
 
     private async getPrintTimeHours(cubicCentimeters: number, speedMultiplier: number): Promise<number> {
-        const dictionaryValue = await this.dictionaryService.findByKey(DICTIONARY_KEYS.PRINT.AVERAGE_PRINT_SPEED);
+        const dictionaryValue = await this.dictionaryService.findByKey(DictionaryKey.AVERAGE_PRINT_SPEED);
         const averageCubicMillimetersPerSecond: number = Number(dictionaryValue.value);
         const printTimeSeconds: number =
             (speedMultiplier * (cubicCentimeters * 1000)) / averageCubicMillimetersPerSecond;

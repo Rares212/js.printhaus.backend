@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { DICTIONARY_KEYS, PrintCostPartDto } from '@printhaus/common';
+import { DictionaryKey, PrintCostPartDto } from "@printhaus/common";
 import { DictionaryService } from '../../../dictionary/services/dictionary/dictionary.service';
 import { PrintMaterial } from '@haus/db-common/print-material/model/print-material';
 const Dinero = require('dinero.js');
@@ -38,7 +38,7 @@ export class PrintCostService {
 
     private async calculateTimeCost(printTimeHours: number): Promise<PrintCostPartDto> {
         try {
-            const dictionaryValue = await this.dictionaryService.findByKey(DICTIONARY_KEYS.PRINT.COST_PER_HOUR);
+            const dictionaryValue = await this.dictionaryService.findByKey(DictionaryKey.PRINT_COST_PER_HOUR);
             const costPerHour: Dinero.Dinero = Dinero(JSON.parse(dictionaryValue.value));
             const cost: Dinero.Dinero = costPerHour.multiply(printTimeHours);
 
@@ -56,7 +56,7 @@ export class PrintCostService {
 
     private async calculateFixedCost(): Promise<PrintCostPartDto> {
         try {
-            const dictionaryValue = await this.dictionaryService.findByKey(DICTIONARY_KEYS.PRINT.FIXED_COST);
+            const dictionaryValue = await this.dictionaryService.findByKey(DictionaryKey.PRINT_FIXED_COST);
             const fixedCost: Dinero.Dinero = Dinero(JSON.parse(dictionaryValue.value));
 
             return new PrintCostPartDto(
@@ -71,7 +71,7 @@ export class PrintCostService {
 
     private async getMoneyFormat(): Promise<string> {
         try {
-            return this.dictionaryService.findByKey(DICTIONARY_KEYS.GENERAL.MONEY_FORMAT).then((value) => value.value);
+            return this.dictionaryService.findByKey(DictionaryKey.MONEY_FORMAT).then((value) => value.value);
         } catch (error) {
             throw new HttpException('Error getting money format!', HttpStatus.INTERNAL_SERVER_ERROR);
         }

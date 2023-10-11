@@ -94,7 +94,7 @@ export class ModelListenerService implements OnModuleInit, OnModuleDestroy {
 
     private async createModelInfoRecord(fileInfo: FileInfo, fileType: SupportedMeshFileTypes): Promise<void> {
         let modelInfo: ModelInfo = await this.modelInfoModel.findOne({ title: fileInfo.title }).exec();
-        if (!modelInfo) {
+        if (modelInfo) {
             return;
         }
 

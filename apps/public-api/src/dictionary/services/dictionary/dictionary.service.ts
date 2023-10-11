@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DictionaryValueDto } from '@printhaus/common';
+import { DictionaryKey, DictionaryValueDto } from "@printhaus/common";
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { DictionaryValueRepo } from '@haus/db-common/dictionary-value/repo/dictionary-value.repo';
@@ -15,7 +15,7 @@ export class DictionaryService {
     ) {}
 
     // @Cacheable({key: 'DICTIONARY_VALUE'})
-    async findByKey(key: string): Promise<DictionaryValueDto> {
+    async findByKey(key: DictionaryKey): Promise<DictionaryValueDto> {
         return this.dictionaryValueRepo
             .findByKey(key)
             .then((dictionaryValue) => {
